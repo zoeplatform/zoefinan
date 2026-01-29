@@ -1,0 +1,144 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =========================================================
+   ANIMAÇÃO (Orbe flutuando) - usada no Onboarding e Home
+   ========================================================= */
+@keyframes orbFloat {
+  0% {
+    transform: translate(-50%, 0px);
+  }
+  50% {
+    transform: translate(-48%, -18px);
+  }
+  100% {
+    transform: translate(-50%, 0px);
+  }
+}
+
+.animate-orb {
+  animation: orbFloat 14s ease-in-out infinite;
+}
+
+/* =========================================================
+   AUTH (Onboarding/Login/Cadastro)
+   ========================================================= */
+body.theme-auth {
+  background: #000;
+  color: #fff;
+}
+
+/* Se seu onboarding estiver usando text-gray-... (Tailwind), força branco */
+body.theme-auth .text-gray-600,
+body.theme-auth .text-gray-500,
+body.theme-auth .text-gray-400 {
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+
+/* Botão "Avançar" pill (bordas 50%) */
+body.theme-auth .onboarding__next {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border-radius: 999px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+body.theme-auth .onboarding__next:hover {
+  transform: translateY(-1px);
+}
+body.theme-auth .onboarding__next:active {
+  transform: translateY(0px) scale(0.99);
+  opacity: 0.96;
+}
+
+/* “bolinha” da seta */
+body.theme-auth .onboarding__nextArrow {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.10);
+}
+
+/* =========================================================
+   HOME (mesma identidade escura premium)
+   ========================================================= */
+body.theme-home {
+  background: #000;
+  color: #fff;
+}
+.card-pill {
+@apply rounded-full bg-zinc-900/80 border border-white/10;
+}
+/* Texto com cara de artigo (sem depender de plugin) */
+.prose-article h1 {
+  @apply text-2xl font-semibold text-white tracking-tight leading-snug;
+}
+
+.prose-article h2 {
+  @apply mt-7 text-lg font-semibold text-white/90 leading-snug;
+}
+
+.prose-article h3 {
+  @apply mt-6 text-base font-semibold text-white/85 leading-snug;
+}
+
+.prose-article p {
+  @apply mt-4 text-[15px] leading-relaxed text-white/70;
+}
+
+.prose-article ul {
+  @apply mt-4 space-y-2 pl-5;
+}
+
+.prose-article li {
+  @apply list-disc text-[15px] leading-relaxed text-white/70;
+}
+
+.prose-article a {
+  @apply text-white underline underline-offset-4 decoration-white/30;
+}
+
+.prose-article blockquote {
+  @apply mt-5 rounded-2xl bg-white/5 border border-white/10 p-4;
+}
+
+.prose-article blockquote p {
+  @apply mt-0 text-white/75;
+}
+
+.prose-article hr {
+  @apply my-6 border-white/10;
+}
+
+.prose-article .tag {
+  @apply inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-[11px] font-medium text-white/70;
+}
+
+.prose-article .muted {
+  @apply text-xs text-white/45;
+}
+
+.prose-article .callout {
+  @apply mt-6 rounded-2xl bg-zinc-900/80 border border-white/10 p-5;
+}
+
+.prose-article .callout-title {
+  @apply font-semibold text-white;
+}
+
+.prose-article .callout-text {
+  @apply mt-2 text-sm text-white/60 leading-relaxed;
+}
