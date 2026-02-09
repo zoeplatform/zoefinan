@@ -67,21 +67,21 @@ export default function Analytics() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen bg-surface flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white/70" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-black text-white p-6 pb-32 md:pb-8">
+    <div className="min-h-screen bg-surface text-white p-6 pb-32 md:pb-8">
       <div className="max-w-6xl mx-auto">
         <header className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-2xl font-black uppercase tracking-tighter">Analytics</h1>
             <p className="text-xs text-white/40 mt-1 uppercase tracking-widest font-bold">Saúde Financeira</p>
           </div>
-          <div className="h-12 w-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
+          <div className="h-12 w-12 rounded-2xl shadow-sm dark:shadow-none bg-surface-high dark:bg-surface-highest border border-white/10 flex items-center justify-center">
             <CalendarBlank size={24} weight="duotone" className="text-white/60" />
           </div>
         </header>
@@ -92,10 +92,10 @@ export default function Analytics() {
             <button
               key={month}
               onClick={() => setSelectedMonth(month)}
-              className={`px-5 py-2.5 rounded-2xl text-[10px] font-black transition-all duration-300 whitespace-nowrap border ${
+              className={`px-5 py-2.5 rounded-2xl shadow-sm dark:shadow-none text-[10px] font-black transition-all duration-300 whitespace-nowrap border ${
                 selectedMonth === month
-                  ? "bg-white text-black border-white shadow-lg shadow-white/5 scale-105"
-                  : "bg-white/5 text-white/30 border-white/5 hover:bg-white/10 hover:text-white/60"
+                  ? "bg-on-surface text-surface-lowest dark:bg-white dark:text-black border-white shadow-lg shadow-white/5 scale-105"
+                  : "bg-surface-high dark:bg-surface-highest text-white/30 border-white/5 hover:bg-surface-high dark:bg-surface-highest hover:text-white/60"
               }`}
             >
               {formatMonthKey(month).toUpperCase()}
@@ -106,7 +106,7 @@ export default function Analytics() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Gráfico de Desempenho */}
           <div className="lg:col-span-8">
-            <div className="bg-zinc-900/40 border border-white/10 rounded-[32px] p-7 backdrop-blur-xl shadow-2xl h-full">
+            <div className="bg-surface-lowest dark:bg-surface-high border border-white/10 rounded-[32px] shadow-md dark:shadow-none p-7 backdrop-blur-xl shadow-2xl h-full">
               <div className="flex justify-between items-start mb-8">
                 <div>
                   <p className="text-[10px] text-white/30 uppercase tracking-[0.2em] font-black mb-1">Saldo Acumulado</p>
@@ -128,7 +128,7 @@ export default function Analytics() {
           {/* Resumo e Detalhamento */}
           <div className="lg:col-span-4 space-y-6">
             <div className="grid grid-cols-2 gap-4">
-              <div className="bg-zinc-900/40 border border-white/5 p-5 rounded-3xl backdrop-blur-sm">
+              <div className="bg-surface-lowest dark:bg-surface-high border border-white/5 p-5 rounded-3xl backdrop-blur-sm">
                 <div className="flex items-center gap-2 mb-2">
                   <div className="h-2 w-2 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.5)]" />
                   <p className="text-[10px] text-white/30 uppercase tracking-widest font-black">Entradas</p>
@@ -137,7 +137,7 @@ export default function Analytics() {
                   R$ {totalIncome.toLocaleString("pt-BR")}
                 </p>
               </div>
-              <div className="bg-zinc-900/40 border border-white/5 p-5 rounded-3xl backdrop-blur-sm">
+              <div className="bg-surface-lowest dark:bg-surface-high border border-white/5 p-5 rounded-3xl backdrop-blur-sm">
                 <div className="flex items-center gap-2 mb-2">
                   <div className="h-2 w-2 rounded-full bg-red-400 shadow-[0_0_8px_rgba(248,113,113,0.5)]" />
                   <p className="text-[10px] text-white/30 uppercase tracking-widest font-black">Saídas</p>
@@ -148,7 +148,7 @@ export default function Analytics() {
               </div>
             </div>
 
-            <div className="bg-zinc-900/60 border border-white/10 rounded-[32px] p-6">
+            <div className="bg-surface-lowest dark:bg-surface-high border border-white/10 rounded-[32px] shadow-md dark:shadow-none p-6">
               <CategoryBreakdown categories={categories} totalIncome={totalIncome} />
             </div>
           </div>

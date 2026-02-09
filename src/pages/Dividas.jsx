@@ -25,7 +25,6 @@ export default function Dividas() {
           const docSnap = await getDoc(userRef);
           if (docSnap.exists()) {
             const userData = docSnap.data();
-            // Prioriza dados do histórico mensal para manter coesão
             const monthData = userData.historicoMensal?.[currentMonth]?.dividas;
             const baseData = userData.dividas;
             setLista(monthData || baseData || []);
@@ -50,13 +49,10 @@ export default function Dividas() {
       const userRef = doc(db, "usuarios", user.uid);
       const docSnap = await getDoc(userRef);
       const userData = docSnap.data() || {};
-      
       const currentMonthData = userData.historicoMensal?.[currentMonth] || {};
       
       await updateDoc(userRef, {
-        // Atualiza no perfil base
         dividas: novaLista,
-        // Atualiza no histórico do mês atual
         [`historicoMensal.${currentMonth}`]: {
           ...currentMonthData,
           dividas: novaLista
@@ -98,8 +94,8 @@ export default function Dividas() {
 
   if (fetching) {
     return (
-      <div className="h-screen bg-black flex items-center justify-center text-white/70">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-white/30 mr-3" />
+      <div className="h-screen bg-surface flex items-center justify-center text-on-surface-variant">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-on-surface-variant mr-3" />
         Carregando...
       </div>
     );
@@ -108,9 +104,9 @@ export default function Dividas() {
   const totalParcelas = lista.reduce((acc, curr) => acc + (Number(curr.parcela) || 0), 0);
 
   return (
-    <div className="min-h-screen bg-black px-6 pt-8 pb-32 relative overflow-hidden">
-      {/* Background Premium */}
-      <div className="pointer-events-none absolute inset-0">
+    <div className="min-h-screen bg-surface px-6 pt-8 pb-32 relative overflow-hidden transition-colors duration-300">
+      {/* Background Premium (apenas no escuro) */}
+      <div className="pointer-events-none absolute inset-0 dark:block hidden">
         <div className="absolute -top-24 -left-24 h-[320px] w-[320px] rounded-full bg-white/5 blur-3xl" />
         <div className="absolute -bottom-32 -right-24 h-[420px] w-[420px] rounded-full bg-white/5 blur-3xl" />
         <div className="absolute left-1/2 top-[10%] -translate-x-1/2 h-[500px] w-[500px] rounded-full bg-gradient-to-b from-purple-500/10 via-blue-500/10 to-pink-500/10 blur-[100px] opacity-30" />
@@ -121,64 +117,73 @@ export default function Dividas() {
         <div className="flex items-center gap-4 mb-8">
           <button
             onClick={() => navigate(-1)}
-            className="h-12 w-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center active:scale-95 transition-all"
+            className="h-12 w-12 rounded-2xl shadow-sm dark:shadow-none bg-surface-lowest dark:bg-surface-high border border-default flex items-center justify-center active:scale-95 transition-all"
           >
-            <ArrowLeft size={20} className="text-white" />
+            <ArrowLeft size={20} className="text-on-surface" />
           </button>
           <div>
-            <h1 className="text-2xl font-black text-white tracking-tight uppercase">Dívidas Atuais</h1>
-            <p className="text-[10px] text-white/40 font-bold uppercase tracking-[0.2em]">Gestão de Passivos</p>
+            <h1 className="text-2xl font-black text-on-surface tracking-tight uppercase">Dívidas Atuais</h1>
+            <p className="text-[10px] text-on-surface-variant font-bold uppercase tracking-[0.2em]">Gestão de Passivos</p>
           </div>
         </div>
 
         {/* Card de Adição */}
-        <div className="rounded-3xl bg-zinc-900/60 border border-white/10 p-6 backdrop-blur-md shadow-xl mb-8">
-          <h2 className="text-[10px] font-black text-white/30 mb-5 uppercase tracking-[0.2em]">Novo Compromisso</h2>
+        <div className="rounded-[32px] bg-surface-lowest dark:bg-surface-high border border-default p-8 shadow-xl dark:shadow-none mb-8">
+          <h2 className="text-[10px] font-black text-on-surface-variant mb-5 uppercase tracking-[0.2em]">Novo Compromisso</h2>
           <div className="space-y-4">
-            <input
-              type="text"
-              placeholder="Credor (ex: Banco X, Cartão Y)"
-              value={credor}
-              onChange={(e) => setCredor(e.target.value)}
-              className="w-full bg-black/40 border border-white/10 rounded-2xl p-4 text-sm text-white placeholder:text-white/20 focus:border-white/30 transition-all outline-none"
-            />
-            <div className="grid grid-cols-2 gap-3">
-              <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 text-[10px] font-bold">SALDO R$</span>
-                <input
-                  type="number"
-                  placeholder="0,00"
-                  value={saldo}
-                  onChange={(e) => setSaldo(e.target.value)}
-                  className="w-full bg-black/40 border border-white/10 rounded-2xl p-4 pl-16 text-sm text-white placeholder:text-white/20 focus:border-white/30 transition-all outline-none"
-                />
+            <div className="space-y-1">
+              <label className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1">Credor</label>
+              <input
+                type="text"
+                placeholder="Credor (ex: Banco X, Cartão Y)"
+                value={credor}
+                onChange={(e) => setCredor(e.target.value)}
+                className="w-full bg-surface-low dark:bg-black/10 border border-default rounded-2xl p-4 text-sm text-on-surface placeholder:text-on-surface-disabled focus:border-strong transition-all outline-none"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1">Saldo Total</label>
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-disabled text-sm font-bold">R$</span>
+                  <input
+                    type="number"
+                    placeholder="0,00"
+                    value={saldo}
+                    onChange={(e) => setSaldo(e.target.value)}
+                    className="w-full bg-surface-low dark:bg-black/10 border border-default rounded-2xl p-4 pl-10 text-sm text-on-surface placeholder:text-on-surface-disabled focus:border-strong transition-all outline-none"
+                  />
+                </div>
               </div>
-              <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 text-[10px] font-bold">PARCELA R$</span>
-                <input
-                  type="number"
-                  placeholder="0,00"
-                  value={parcela}
-                  onChange={(e) => setParcela(e.target.value)}
-                  className="w-full bg-black/40 border border-white/10 rounded-2xl p-4 pl-16 text-sm text-white placeholder:text-white/20 focus:border-white/30 transition-all outline-none"
-                />
+              <div className="space-y-1">
+                <label className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1">Parcela</label>
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-disabled text-sm font-bold">R$</span>
+                  <input
+                    type="number"
+                    placeholder="0,00"
+                    value={parcela}
+                    onChange={(e) => setParcela(e.target.value)}
+                    className="w-full bg-surface-low dark:bg-black/10 border border-default rounded-2xl p-4 pl-10 text-sm text-on-surface placeholder:text-on-surface-disabled focus:border-strong transition-all outline-none"
+                  />
+                </div>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 p-4 bg-white/5 rounded-2xl border border-white/5">
+            <div className="flex items-center gap-3 p-4 bg-surface-low dark:bg-surface-highest rounded-2xl border border-default">
               <input
                 type="checkbox"
                 id="renegociada"
                 checked={renegociada}
                 onChange={(e) => setRenegociada(e.target.checked)}
-                className="w-5 h-5 rounded-lg bg-black border-white/10 text-white focus:ring-0"
+                className="w-5 h-5 rounded-lg bg-surface border-default text-on-surface focus:ring-0"
               />
-              <label htmlFor="renegociada" className="text-xs font-bold text-white/60 uppercase tracking-widest cursor-pointer">Já foi renegociada?</label>
+              <label htmlFor="renegociada" className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest cursor-pointer">Já foi renegociada?</label>
             </div>
 
             <button
               onClick={adicionarDivida}
-              className="w-full py-4 rounded-2xl bg-white text-black font-black text-[10px] tracking-widest flex items-center justify-center gap-2 hover:scale-[0.98] active:scale-95 transition-all"
+              className="w-full py-5 mt-2 rounded-2xl bg-on-surface text-surface-lowest dark:bg-white dark:text-black font-black text-[10px] tracking-[0.2em] flex items-center justify-center gap-2 hover:scale-[0.98] active:scale-95 transition-all shadow-lg"
             >
               <Plus weight="bold" size={16} />
               ADICIONAR À LISTA
@@ -188,50 +193,50 @@ export default function Dividas() {
 
         {/* Resumo */}
         <div className="flex items-center justify-between mb-6 px-2">
-          <h3 className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">Sua Lista</h3>
+          <h3 className="text-[10px] font-black text-on-surface-variant uppercase tracking-[0.2em]">Sua Lista</h3>
           <div className="text-right">
-            <p className="text-[10px] text-white/30 uppercase font-black">Comprometimento Mensal</p>
-            <p className="text-lg font-black text-red-400">R$ {totalParcelas.toLocaleString('pt-BR')}</p>
+            <p className="text-[10px] text-on-surface-variant uppercase font-black">Comprometimento Mensal</p>
+            <p className="text-xl font-black text-error">R$ {totalParcelas.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
           </div>
         </div>
 
         {/* Listagem */}
         <div className="space-y-3">
           {lista.length === 0 ? (
-            <div className="text-center py-12 bg-white/5 rounded-3xl border border-dashed border-white/10">
-              <CreditCard size={32} className="mx-auto text-white/10 mb-3" />
-              <p className="text-xs text-white/30 font-bold uppercase tracking-widest">Nenhuma dívida registrada</p>
+            <div className="text-center py-16 bg-surface-low dark:bg-surface-high rounded-[32px] border border-dashed border-default">
+              <CreditCard size={32} className="mx-auto text-on-surface-disabled mb-3" />
+              <p className="text-[10px] text-on-surface-variant font-black uppercase tracking-widest">Nenhuma dívida registrada</p>
             </div>
           ) : (
             lista.map((item) => (
-              <div key={item.id} className="group relative rounded-2xl bg-zinc-900/40 border border-white/5 p-5 hover:border-white/20 transition-all">
+              <div key={item.id} className="group relative rounded-2xl bg-surface-lowest dark:bg-surface-high border border-default p-6 hover:border-strong transition-all shadow-sm dark:shadow-none">
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex items-center gap-4">
-                    <div className="h-10 w-10 rounded-xl bg-white/5 flex items-center justify-center text-white/40 group-hover:text-white transition-colors">
-                      <CreditCard size={20} />
+                    <div className="h-12 w-12 rounded-xl bg-surface-high dark:bg-surface-highest flex items-center justify-center text-on-surface-variant group-hover:text-on-surface transition-colors">
+                      <CreditCard size={22} />
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-white/90">{item.credor}</p>
-                      <span className={`text-[8px] font-black px-2 py-0.5 rounded-full uppercase tracking-tighter ${item.renegociada ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`}>
+                      <p className="text-sm font-black text-on-surface uppercase tracking-tight">{item.credor}</p>
+                      <span className={`text-[8px] font-black px-2 py-0.5 rounded-full uppercase tracking-tighter ${item.renegociada ? 'bg-success-bg text-success' : 'bg-error-bg text-error'}`}>
                         {item.renegociada ? 'Renegociada' : 'Valor Bruto'}
                       </span>
                     </div>
                   </div>
                   <button 
                     onClick={() => removerDivida(item.id)}
-                    className="p-2 text-white/10 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all"
+                    className="p-2 text-on-surface-disabled hover:text-error hover:bg-error-bg rounded-xl transition-all"
                   >
                     <Trash size={18} />
                   </button>
                 </div>
-                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/5">
+                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-default">
                   <div>
-                    <p className="text-[8px] text-white/30 font-black uppercase tracking-widest">Saldo Total</p>
-                    <p className="text-sm font-black text-white/80">R$ {item.saldo.toLocaleString('pt-BR')}</p>
+                    <p className="text-[8px] text-on-surface-variant font-black uppercase tracking-widest">Saldo Total</p>
+                    <p className="text-sm font-black text-on-surface-medium">R$ {item.saldo.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-[8px] text-white/30 font-black uppercase tracking-widest">Parcela Mensal</p>
-                    <p className="text-sm font-black text-white">R$ {item.parcela.toLocaleString('pt-BR')}</p>
+                    <p className="text-[8px] text-on-surface-variant font-black uppercase tracking-widest">Parcela Mensal</p>
+                    <p className="text-sm font-black text-on-surface">R$ {item.parcela.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
                   </div>
                 </div>
               </div>
@@ -241,7 +246,7 @@ export default function Dividas() {
 
         <button
           onClick={() => navigate("/diagnostico")}
-          className="w-full mt-10 rounded-3xl bg-white text-black py-5 font-black text-[10px] uppercase tracking-[0.2em] active:scale-95 transition-all shadow-xl shadow-white/5"
+          className="w-full mt-10 rounded-[24px] bg-on-surface text-surface-lowest dark:bg-white dark:text-black py-5 font-black text-[10px] uppercase tracking-[0.2em] active:scale-95 transition-all shadow-xl"
         >
           Gerar Diagnóstico
         </button>

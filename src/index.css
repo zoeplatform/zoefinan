@@ -3,142 +3,217 @@
 @tailwind utilities;
 
 /* =========================================================
-   ANIMAÇÃO (Orbe flutuando) - usada no Onboarding e Home
+   SISTEMA DE CORES - TEMA CLARO (PADRÃO)
+   ========================================================= */
+:root {
+  /* Surface Colors - 5 níveis de hierarquia */
+  --surface-lowest: #FFFFFF;
+  --surface-low: #F8F9FA;
+  --surface: #F1F3F5;
+  --surface-high: #E9ECEF;
+  --surface-highest: #DEE2E6;
+  
+  /* Content Colors */
+  --on-surface: #0F172A;
+  --on-surface-medium: #334155;
+  --on-surface-variant: #64748B;
+  --on-surface-disabled: #94A3B8;
+  
+  /* Accent Colors */
+  --accent-primary: #7C3AED;
+  --accent-primary-hover: #6D28D9;
+  --accent-secondary: #F59E0B;
+  --accent-tertiary: #3B82F6;
+  
+  /* Semantic Colors */
+  --success: #10B981;
+  --success-bg: #D1FAE5;
+  --error: #EF4444;
+  --error-bg: #FEE2E2;
+  --warning: #F59E0B;
+  --warning-bg: #FEF3C7;
+  --info: #3B82F6;
+  --info-bg: #DBEAFE;
+  
+  /* Border Colors - Mais visíveis no tema claro */
+  --border-subtle: rgba(15, 23, 42, 0.08);
+  --border-default: rgba(15, 23, 42, 0.12);
+  --border-strong: rgba(15, 23, 42, 0.20);
+  
+  /* Shadow Colors */
+  --shadow-color: rgba(0, 0, 0, 0.06);
+  --shadow-strength: 0 4px 6px -1px var(--shadow-color), 0 2px 4px -1px var(--shadow-color);
+
+  /* Legacy Variables */
+  --bg-primary: var(--surface);
+  --bg-secondary: var(--surface-lowest);
+  --text-primary: var(--on-surface);
+  --text-secondary: var(--on-surface-medium);
+  --text-muted: var(--on-surface-variant);
+  --border-color: var(--border-default);
+  --card-bg: var(--surface-lowest);
+  --card-hover: var(--surface-low);
+  --accent-color: var(--accent-primary);
+  --accent-text: #FFFFFF;
+  --input-bg: var(--surface-lowest);
+  --sidebar-bg: var(--surface-highest);
+}
+
+/* =========================================================
+   SISTEMA DE CORES - TEMA ESCURO (RESTAURADO)
+   ========================================================= */
+.dark {
+  /* Surface Colors */
+  --surface-lowest: #000000;
+  --surface-low: #09090B;
+  --surface: #000000;
+  --surface-high: #18181B;
+  --surface-highest: #27272A;
+  
+  /* Content Colors */
+  --on-surface: rgba(255, 255, 255, 0.95);
+  --on-surface-medium: rgba(255, 255, 255, 0.70);
+  --on-surface-variant: rgba(255, 255, 255, 0.5);
+  --on-surface-disabled: rgba(255, 255, 255, 0.38);
+  
+  /* Accent Colors */
+  --accent-primary: #FFFFFF;
+  --accent-primary-hover: rgba(255, 255, 255, 0.90);
+  --accent-secondary: #F59E0B;
+  --accent-tertiary: #3B82F6;
+  
+  /* Semantic Colors */
+  --success: #10B981;
+  --success-bg: rgba(16, 185, 129, 0.15);
+  --error: #EF4444;
+  --error-bg: rgba(239, 68, 68, 0.15);
+  --warning: #F59E0B;
+  --warning-bg: rgba(245, 158, 11, 0.15);
+  --info: #3B82F6;
+  --info-bg: rgba(59, 130, 246, 0.15);
+  
+  /* Border Colors */
+  --border-subtle: rgba(255, 255, 255, 0.05);
+  --border-default: rgba(255, 255, 255, 0.10);
+  --border-strong: rgba(255, 255, 255, 0.15);
+  
+  /* Shadow Colors - Desativadas no dark */
+  --shadow-color: transparent;
+  --shadow-strength: none;
+
+  /* Legacy Variables */
+  --bg-primary: var(--surface);
+  --bg-secondary: var(--surface-low);
+  --text-primary: var(--on-surface);
+  --text-secondary: var(--on-surface-medium);
+  --text-muted: var(--on-surface-variant);
+  --border-color: var(--border-default);
+  --card-bg: var(--surface-high);
+  --card-hover: var(--surface-highest);
+  --accent-color: var(--accent-primary);
+  --accent-text: #000000;
+  --input-bg: rgba(0, 0, 0, 0.4);
+  --sidebar-bg: var(--surface-low);
+}
+
+/* =========================================================
+   ESTILOS GLOBAIS
+   ========================================================= */
+body {
+  background-color: var(--surface);
+  color: var(--on-surface);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* =========================================================
+   CLASSES UTILITÁRIAS - SURFACE
+   ========================================================= */
+.bg-surface-lowest { background-color: var(--surface-lowest); }
+.bg-surface-low { background-color: var(--surface-low); }
+.bg-surface { background-color: var(--surface); }
+.bg-surface-high { background-color: var(--surface-high); }
+.bg-surface-highest { background-color: var(--surface-highest); }
+
+/* =========================================================
+   CLASSES UTILITÁRIAS - CONTENT
+   ========================================================= */
+.text-on-surface { color: var(--on-surface); }
+.text-on-surface-medium { color: var(--on-surface-medium); }
+.text-on-surface-variant { color: var(--on-surface-variant); }
+.text-on-surface-disabled { color: var(--on-surface-disabled); }
+
+/* =========================================================
+   CLASSES UTILITÁRIAS - BORDERS
+   ========================================================= */
+.border-subtle { border-color: var(--border-subtle); }
+.border-default { border-color: var(--border-default); }
+.border-strong { border-color: var(--border-strong); }
+
+/* =========================================================
+   CLASSES UTILITÁRIAS - SEMANTIC
+   ========================================================= */
+.text-success { color: var(--success); }
+.bg-success { background-color: var(--success-bg); }
+.text-error { color: var(--error); }
+.bg-error { background-color: var(--error-bg); }
+.text-warning { color: var(--warning); }
+.bg-warning { background-color: var(--warning-bg); }
+.text-info { color: var(--info); }
+.bg-info { background-color: var(--info-bg); }
+
+/* =========================================================
+   ANIMAÇÃO (Orbe flutuando)
    ========================================================= */
 @keyframes orbFloat {
-  0% {
-    transform: translate(-50%, 0px);
-  }
-  50% {
-    transform: translate(-48%, -18px);
-  }
-  100% {
-    transform: translate(-50%, 0px);
-  }
+  0% { transform: translate(-50%, 0px); }
+  50% { transform: translate(-48%, -18px); }
+  100% { transform: translate(-50%, 0px); }
 }
-
-.animate-orb {
-  animation: orbFloat 14s ease-in-out infinite;
-}
+.animate-orb { animation: orbFloat 14s ease-in-out infinite; }
 
 /* =========================================================
-   AUTH (Onboarding/Login/Cadastro)
+   ESTILOS DE COMPONENTES ADAPTÁVEIS
    ========================================================= */
-body.theme-auth {
-  background: #000;
-  color: #fff;
+.card-premium {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-strength);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.3s ease;
 }
 
-/* Se seu onboarding estiver usando text-gray-... (Tailwind), força branco */
-body.theme-auth .text-gray-600,
-body.theme-auth .text-gray-500,
-body.theme-auth .text-gray-400 {
-  color: rgba(255, 255, 255, 0.75) !important;
+.card-premium:hover {
+  background-color: var(--card-hover);
 }
 
-/* Botão "Avançar" pill (bordas 50%) */
-body.theme-auth .onboarding__next {
-  width: 100%;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff;
-  border-radius: 999px;
-  padding: 14px 18px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  cursor: pointer;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-
-body.theme-auth .onboarding__next:hover {
-  transform: translateY(-1px);
-}
-body.theme-auth .onboarding__next:active {
-  transform: translateY(0px) scale(0.99);
-  opacity: 0.96;
-}
-
-/* “bolinha” da seta */
-body.theme-auth .onboarding__nextArrow {
-  width: 44px;
-  height: 44px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  display: grid;
-  place-items: center;
-  background: rgba(255, 255, 255, 0.10);
-}
-
-/* =========================================================
-   HOME (mesma identidade escura premium)
-   ========================================================= */
-body.theme-home {
-  background: #000;
-  color: #fff;
-}
 .card-pill {
-@apply rounded-full bg-zinc-900/80 border border-white/10;
-}
-/* Texto com cara de artigo (sem depender de plugin) */
-.prose-article h1 {
-  @apply text-2xl font-semibold text-white tracking-tight leading-snug;
-}
-
-.prose-article h2 {
-  @apply mt-7 text-lg font-semibold text-white/90 leading-snug;
+  @apply rounded-full border;
+  background-color: var(--card-bg);
+  border-color: var(--border-color);
+  box-shadow: var(--shadow-strength);
 }
 
-.prose-article h3 {
-  @apply mt-6 text-base font-semibold text-white/85 leading-snug;
+/* =========================================================
+   ARTIGOS
+   ========================================================= */
+.prose-article h1 { 
+  @apply text-2xl font-semibold tracking-tight leading-snug; 
+  color: var(--on-surface); 
 }
 
-.prose-article p {
-  @apply mt-4 text-[15px] leading-relaxed text-white/70;
+.prose-article h2 { 
+  @apply mt-7 text-lg font-semibold leading-snug; 
+  color: var(--on-surface); 
+  opacity: 0.9; 
 }
 
-.prose-article ul {
-  @apply mt-4 space-y-2 pl-5;
+.prose-article p { 
+  @apply mt-4 text-[15px] leading-relaxed; 
+  color: var(--on-surface-medium); 
 }
 
-.prose-article li {
-  @apply list-disc text-[15px] leading-relaxed text-white/70;
-}
-
-.prose-article a {
-  @apply text-white underline underline-offset-4 decoration-white/30;
-}
-
-.prose-article blockquote {
-  @apply mt-5 rounded-2xl bg-white/5 border border-white/10 p-4;
-}
-
-.prose-article blockquote p {
-  @apply mt-0 text-white/75;
-}
-
-.prose-article hr {
-  @apply my-6 border-white/10;
-}
-
-.prose-article .tag {
-  @apply inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-[11px] font-medium text-white/70;
-}
-
-.prose-article .muted {
-  @apply text-xs text-white/45;
-}
-
-.prose-article .callout {
-  @apply mt-6 rounded-2xl bg-zinc-900/80 border border-white/10 p-5;
-}
-
-.prose-article .callout-title {
-  @apply font-semibold text-white;
-}
-
-.prose-article .callout-text {
-  @apply mt-2 text-sm text-white/60 leading-relaxed;
+.prose-article li { 
+  @apply list-disc text-[15px] leading-relaxed; 
+  color: var(--on-surface-medium); 
 }

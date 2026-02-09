@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import BottomNav from "./BottomNav";
@@ -23,9 +23,15 @@ function getTheme(pathname) {
 
 export default function PageTheme({ children }) {
   const { pathname } = useLocation();
+  
+  // Padrão agora é DARK se não houver nada no localStorage
+  const [isDark, setIsDark] = useState(() => {
+    const saved = localStorage.getItem("zoe-theme");
+    return saved === null ? true : saved === "dark";
+  });
+  
   const isAuthPage = ["/", "/login", "/cadastro", "/setup"].some(path => pathname === path || (path !== "/" && pathname.startsWith(path)));
   
-  // Mapeamento de rotas para o BottomNav
   const getActiveTab = (path) => {
     if (path.startsWith("/home")) return "home";
     if (path.startsWith("/diagnostico")) return "diagnostico";
@@ -37,14 +43,35 @@ export default function PageTheme({ children }) {
 
   useEffect(() => {
     const body = document.body;
+    
     body.classList.forEach((c) => {
       if (c.startsWith("theme-")) body.classList.remove(c);
     });
+    
     body.classList.add(getTheme(pathname));
-  }, [pathname]);
+
+    // Se for DARK, adiciona a classe 'dark'. Se for LIGHT, remove.
+    if (isDark) {
+      body.classList.add("dark");
+    } else {
+      body.classList.remove("dark");
+    }
+
+    const handleThemeChange = () => {
+      const saved = localStorage.getItem("zoe-theme");
+      setIsDark(saved === null ? true : saved === "dark");
+    };
+    window.addEventListener("storage", handleThemeChange);
+    window.addEventListener("themeChanged", handleThemeChange);
+
+    return () => {
+      window.removeEventListener("storage", handleThemeChange);
+      window.removeEventListener("themeChanged", handleThemeChange);
+    };
+  }, [pathname, isDark]);
 
   return (
-    <div className="flex min-h-screen bg-black">
+    <div className={`flex min-h-screen transition-colors duration-300 ${isDark ? "bg-black text-white" : "bg-surface text-on-surface"}`}>
       {!isAuthPage && <Sidebar />}
       <main className={`flex-1 w-full ${!isAuthPage ? "md:pb-0" : ""}`}>
         {children}

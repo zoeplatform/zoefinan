@@ -127,25 +127,28 @@ export default function Lancamentos() {
   ].sort((a, b) => new Date(b.data) - new Date(a.data));
 
   if (loading) return (
-    <div className="h-screen flex items-center justify-center bg-black text-white">
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white/70" />
+    <div className="h-screen flex items-center justify-center bg-surface text-on-surface">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-on-surface-variant" />
     </div>
   );
 
+  const cardClass = "bg-surface-lowest dark:bg-surface-high border border-default p-6 rounded-[32px] shadow-xl dark:shadow-none transition-all duration-300";
+  const inputClass = "w-full bg-surface-low dark:bg-black/10 border border-default rounded-2xl p-4 text-sm text-on-surface placeholder:text-on-surface-disabled focus:border-strong transition-all outline-none";
+
   return (
-    <div className="min-h-screen bg-black text-white p-6 pb-32 md:pb-8">
+    <div className="min-h-screen bg-surface text-on-surface p-6 pb-32 md:pb-8 transition-colors duration-300">
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center justify-between mb-8">
-          <button onClick={() => navigate("/home")} className="p-2 bg-white/5 rounded-full md:hidden">
-            <ArrowLeft size={24} />
+          <button onClick={() => navigate("/home")} className="h-12 w-12 bg-surface-lowest dark:bg-surface-high border border-default rounded-2xl md:hidden shadow-sm dark:shadow-none flex items-center justify-center">
+            <ArrowLeft size={24} className="text-on-surface" />
           </button>
-          <h1 className="text-2xl font-black uppercase tracking-tighter">Lançamentos</h1>
+          <h1 className="text-2xl font-black uppercase tracking-tighter text-on-surface">Lançamentos</h1>
           <div className="w-10 md:hidden" />
         </div>
 
         {/* Seletor de Mês */}
         <div className="mb-8">
-          <div className="flex items-center gap-2 mb-4 text-white/40">
+          <div className="flex items-center gap-2 mb-4 text-on-surface-variant">
             <CalendarBlank size={16} />
             <span className="text-[10px] font-black uppercase tracking-widest">Selecione o Período</span>
           </div>
@@ -156,8 +159,8 @@ export default function Lancamentos() {
                 onClick={() => setSelectedMonth(month)}
                 className={`px-6 py-3 rounded-2xl whitespace-nowrap text-xs transition-all duration-300 border ${
                   selectedMonth === month 
-                    ? "bg-white text-black font-bold border-white shadow-lg shadow-white/10 scale-105" 
-                    : "bg-zinc-900/50 text-white/40 border-white/5 hover:bg-white/5 hover:text-white/60"
+                    ? "bg-on-surface text-surface-lowest dark:bg-white dark:text-black font-black border-on-surface shadow-lg scale-105" 
+                    : "bg-surface-lowest dark:bg-surface-high text-on-surface-variant border-default hover:bg-surface-high dark:hover:bg-surface-highest hover:text-on-surface shadow-sm dark:shadow-none"
                 }`}
               >
                 {formatMonthKey(month)}
@@ -170,21 +173,21 @@ export default function Lancamentos() {
           {/* Coluna da Esquerda: Formulários e Resumo */}
           <div className="lg:col-span-5 space-y-6">
             {/* Renda Base do Mês */}
-            <div className="bg-zinc-900/60 border border-white/10 p-6 rounded-3xl backdrop-blur-md">
-              <p className="text-[10px] text-white/30 uppercase tracking-[0.2em] font-black mb-3">Renda Base do Mês</p>
+            <div className={cardClass}>
+              <p className="text-[10px] text-on-surface-variant uppercase tracking-[0.2em] font-black mb-3">Renda Base do Mês</p>
               <div className="flex gap-3">
                 <div className="relative flex-1">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 text-sm font-bold">R$</span>
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-disabled text-sm font-bold">R$</span>
                   <input
                     type="number"
                     value={rendaBaseInput}
                     onChange={(e) => setRendaBaseInput(e.target.value)}
-                    className="w-full bg-black/40 border border-white/10 rounded-2xl p-4 pl-10 text-sm text-white outline-none focus:border-white/30 transition-all"
+                    className={inputClass + " pl-10"}
                   />
                 </div>
                 <button 
                   onClick={handleUpdateRendaBase}
-                  className="bg-white text-black px-6 rounded-2xl font-black text-[10px] hover:scale-95 transition-transform"
+                  className="bg-on-surface text-surface-lowest dark:bg-white dark:text-black px-6 rounded-2xl font-black text-[10px] hover:scale-95 transition-transform shadow-lg"
                 >
                   ATUALIZAR
                 </button>
@@ -193,34 +196,34 @@ export default function Lancamentos() {
 
             {/* Resumo do Mês */}
             <div className="grid grid-cols-2 gap-4">
-              <div className="bg-zinc-900/50 p-4 rounded-2xl border border-white/5 backdrop-blur-sm">
-                <p className="text-[10px] text-white/40 mb-1 uppercase tracking-wider">Entradas</p>
-                <p className="text-lg font-bold text-green-400">R$ {totalRenda.toLocaleString('pt-BR')}</p>
+              <div className="bg-surface-lowest dark:bg-surface-high p-5 rounded-[24px] border border-default shadow-xl dark:shadow-none">
+                <p className="text-[10px] text-on-surface-variant mb-1 uppercase tracking-widest font-black">Entradas</p>
+                <p className="text-lg font-black text-success">R$ {totalRenda.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
               </div>
-              <div className="bg-zinc-900/50 p-4 rounded-2xl border border-white/5 backdrop-blur-sm">
-                <p className="text-[10px] text-white/40 mb-1 uppercase tracking-wider">Saídas</p>
-                <p className="text-lg font-bold text-red-400">R$ {(totalDespesas + totalDividas).toLocaleString('pt-BR')}</p>
+              <div className="bg-surface-lowest dark:bg-surface-high p-5 rounded-[24px] border border-default shadow-xl dark:shadow-none">
+                <p className="text-[10px] text-on-surface-variant mb-1 uppercase tracking-widest font-black">Saídas</p>
+                <p className="text-lg font-black text-error">R$ {(totalDespesas + totalDividas).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
               </div>
-              <div className="col-span-2 bg-white/5 p-5 rounded-2xl border border-white/10 backdrop-blur-md">
+              <div className="col-span-2 bg-surface-lowest dark:bg-surface-high p-6 rounded-[32px] border border-default shadow-xl dark:shadow-none">
                 <div className="flex justify-between items-center">
                   <div>
-                    <p className="text-xs text-white/40 uppercase tracking-widest">Saldo Disponível</p>
-                    <p className={`text-2xl font-black mt-1 ${saldo >= 0 ? "text-white" : "text-red-500"}`}>
-                      R$ {saldo.toLocaleString('pt-BR')}
+                    <p className="text-[10px] text-on-surface-variant uppercase tracking-[0.2em] font-black">Saldo Disponível</p>
+                    <p className={`text-3xl font-black mt-1 tracking-tighter ${saldo >= 0 ? "text-on-surface" : "text-error"}`}>
+                      R$ {saldo.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                     </p>
                   </div>
-                  <div className={`h-12 w-12 rounded-full flex items-center justify-center ${saldo >= 0 ? "bg-green-500/20 text-green-400" : "bg-red-500/20 text-red-400"}`}>
-                    <TrendUp size={24} weight="bold" className={saldo < 0 ? "rotate-180" : ""} />
+                  <div className={`h-14 w-14 rounded-2xl flex items-center justify-center border border-default ${saldo >= 0 ? "bg-success-bg text-success" : "bg-error-bg text-error"}`}>
+                    <TrendUp size={28} weight="bold" className={saldo < 0 ? "rotate-180" : ""} />
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Formulário de Adição */}
-            <div className="bg-zinc-900/80 p-6 rounded-[32px] border border-white/10 shadow-2xl">
-              <h2 className="text-[10px] font-black text-white/30 mb-5 uppercase tracking-[0.2em]">Novo Lançamento</h2>
+            <div className="bg-surface-lowest dark:bg-surface-high p-8 rounded-[32px] border border-default shadow-xl dark:shadow-none">
+              <h2 className="text-[10px] font-black text-on-surface-variant mb-6 uppercase tracking-[0.2em]">Novo Lançamento</h2>
               <div className="space-y-5">
-                <div className="flex p-1 bg-black/50 rounded-2xl border border-white/5">
+                <div className="flex p-1.5 bg-surface-low dark:bg-black/10 rounded-2xl border border-default">
                   {[
                     { id: "despesa", label: "DESPESA" },
                     { id: "rendaExtra", label: "RENDA" },
@@ -229,10 +232,10 @@ export default function Lancamentos() {
                     <button
                       key={t.id}
                       onClick={() => setTipo(t.id)}
-                      className={`flex-1 py-2.5 rounded-xl text-[10px] font-black transition-all duration-300 ${
+                      className={`flex-1 py-3 rounded-xl text-[10px] font-black transition-all duration-300 ${
                         tipo === t.id 
-                          ? "bg-white text-black shadow-lg scale-[1.02]" 
-                          : "text-white/30 hover:text-white/60"
+                          ? "bg-on-surface text-surface-lowest dark:bg-white dark:text-black shadow-lg scale-[1.02]" 
+                          : "text-on-surface-variant hover:text-on-surface"
                       }`}
                     >
                       {t.label}
@@ -240,89 +243,92 @@ export default function Lancamentos() {
                   ))}
                 </div>
 
-                <div className="space-y-3">
-                  <input
-                    type="text"
-                    placeholder={tipo === "divida" ? "Credor / Nome da Dívida" : "Descrição"}
-                    value={desc}
-                    onChange={(e) => setDesc(e.target.value)}
-                    className="w-full bg-black/40 border border-white/10 rounded-2xl p-4 text-sm text-white placeholder:text-white/20 focus:border-white/30 transition-all outline-none"
-                  />
-                  <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 text-sm font-bold">R$</span>
+                <div className="space-y-4">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1">Descrição</label>
                     <input
-                      type="number"
-                      placeholder="0,00"
-                      value={valor}
-                      onChange={(e) => setValor(e.target.value)}
-                      className="w-full bg-black/40 border border-white/10 rounded-2xl p-4 pl-10 text-sm text-white placeholder:text-white/20 focus:border-white/30 transition-all outline-none"
+                      type="text"
+                      placeholder={tipo === "divida" ? "Credor / Nome da Dívida" : "Ex: Supermercado, Aluguel..."}
+                      value={desc}
+                      onChange={(e) => setDesc(e.target.value)}
+                      className={inputClass}
                     />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1">Valor</label>
+                    <div className="relative">
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-disabled text-sm font-bold">R$</span>
+                      <input
+                        type="number"
+                        placeholder="0,00"
+                        value={valor}
+                        onChange={(e) => setValor(e.target.value)}
+                        className={inputClass + " pl-10"}
+                      />
+                    </div>
                   </div>
                 </div>
 
-                <button
+                <button 
                   onClick={handleAdd}
-                  disabled={saving || !desc || !valor}
-                  className={`w-full py-4 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300 ${
-                    saving || !desc || !valor 
-                      ? "bg-white/5 text-white/20 cursor-not-allowed" 
-                      : "bg-white text-black font-black hover:scale-[0.98] active:scale-95 shadow-xl shadow-white/5"
-                  }`}
+                  disabled={saving}
+                  className="w-full py-5 rounded-2xl bg-on-surface text-surface-lowest dark:bg-white dark:text-black font-black text-[10px] uppercase tracking-[0.2em] flex items-center justify-center gap-2 hover:scale-[0.98] active:scale-95 transition-all shadow-lg disabled:opacity-50"
                 >
-                  {saving ? (
-                    <div className="h-5 w-5 border-2 border-black/20 border-t-black rounded-full animate-spin" />
-                  ) : (
-                    <>
-                      <Plus weight="bold" size={18} />
-                      <span>ADICIONAR</span>
-                    </>
-                  )}
+                  <Plus weight="bold" size={18} />
+                  {saving ? "SALVANDO..." : "CONFIRMAR LANÇAMENTO"}
                 </button>
               </div>
             </div>
           </div>
 
-          {/* Coluna da Direita: Lista de Lançamentos */}
+          {/* Coluna da Direita: Listagem */}
           <div className="lg:col-span-7">
-            <div className="bg-zinc-900/40 border border-white/5 rounded-[32px] p-6 h-full min-h-[500px]">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">Histórico do Período</h2>
-                <span className="text-[10px] font-black text-white/20">{todosLancamentos.length} ITENS</span>
+            <div className="bg-surface-lowest dark:bg-surface-high rounded-[32px] border border-default shadow-xl dark:shadow-none p-8 min-h-[600px]">
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h3 className="text-lg font-black text-on-surface uppercase tracking-tighter">Histórico Detalhado</h3>
+                  <p className="text-[10px] text-on-surface-variant font-bold uppercase tracking-widest mt-1">Movimentações de {formatMonthKey(selectedMonth)}</p>
+                </div>
+                <div className="h-10 w-10 rounded-xl bg-surface-high dark:bg-surface-highest border border-default flex items-center justify-center text-on-surface-disabled">
+                  <Receipt size={20} />
+                </div>
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {todosLancamentos.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center py-20 text-white/10">
-                    <Receipt size={48} weight="thin" />
-                    <p className="mt-4 text-xs font-bold uppercase tracking-widest">Nenhum lançamento este mês</p>
+                  <div className="flex flex-col items-center justify-center py-20 text-center">
+                    <div className="h-20 w-20 rounded-full bg-surface-low dark:bg-black/10 flex items-center justify-center mb-4 border border-dashed border-default">
+                      <Receipt size={32} className="text-on-surface-disabled" />
+                    </div>
+                    <p className="text-xs font-black text-on-surface-variant uppercase tracking-widest">Nenhum lançamento neste período</p>
                   </div>
                 ) : (
                   todosLancamentos.map((item) => (
-                    <div key={item.id} className="group flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-white/10 transition-all">
+                    <div key={item.id} className="group flex items-center justify-between p-5 rounded-2xl bg-surface-low dark:bg-black/10 border border-default hover:border-strong transition-all shadow-sm dark:shadow-none">
                       <div className="flex items-center gap-4">
-                        <div className={`h-10 w-10 rounded-xl flex items-center justify-center ${
-                          item.tipo === 'renda' ? 'bg-green-500/10 text-green-400' : 
-                          item.tipo === 'divida' ? 'bg-red-500/10 text-red-400' : 'bg-white/5 text-white/40'
+                        <div className={`h-12 w-12 rounded-xl flex items-center justify-center border border-default ${
+                          item.tipo === 'renda' ? 'bg-success-bg text-success' : 
+                          item.tipo === 'divida' ? 'bg-info-bg text-info' : 
+                          'bg-surface-high dark:bg-surface-highest text-on-surface-medium'
                         }`}>
-                          {item.tipo === 'renda' ? <TrendUp size={20} /> : 
-                           item.tipo === 'divida' ? <CreditCard size={20} /> : <Receipt size={20} />}
+                          {item.tipo === 'renda' ? <TrendUp size={22} /> : item.tipo === 'divida' ? <CreditCard size={22} /> : <Receipt size={22} />}
                         </div>
                         <div>
-                          <p className="text-sm font-bold text-white/90">{item.descricao}</p>
-                          <p className="text-[8px] font-black text-white/20 uppercase tracking-tighter">
-                            {new Date(item.data).toLocaleDateString('pt-BR')} • {item.tipo.toUpperCase()}
+                          <p className="text-sm font-black text-on-surface uppercase tracking-tight">{item.descricao}</p>
+                          <p className="text-[10px] text-on-surface-variant font-bold uppercase tracking-widest">
+                            {item.tipo === 'renda' ? 'Entrada' : item.tipo === 'divida' ? 'Dívida' : 'Despesa'} • {new Date(item.data).toLocaleDateString('pt-BR')}
                           </p>
                         </div>
                       </div>
-                      <div className="flex items-center gap-4">
-                        <p className={`text-sm font-black ${item.tipo === 'renda' ? 'text-green-400' : 'text-white'}`}>
-                          {item.tipo === 'renda' ? '+' : '-'} R$ {item.valor.toLocaleString('pt-BR')}
+                      <div className="flex items-center gap-5">
+                        <p className={`text-sm font-black ${item.tipo === 'renda' ? 'text-success' : 'text-on-surface'}`}>
+                          {item.tipo === 'renda' ? '+' : '-'} R$ {item.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                         </p>
                         <button 
                           onClick={() => handleRemove(item.id, item.listType)}
-                          className="p-2 text-white/5 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                          className="p-2.5 text-on-surface-disabled hover:text-error hover:bg-error-bg rounded-xl transition-all opacity-0 group-hover:opacity-100"
                         >
-                          <Trash size={16} />
+                          <Trash size={18} />
                         </button>
                       </div>
                     </div>

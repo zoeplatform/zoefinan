@@ -111,17 +111,17 @@ export default function SetupFinanceiro() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col relative overflow-hidden">
+    <div className="min-h-screen bg-surface text-white flex flex-col relative overflow-hidden">
       {/* Background decorativo */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-24 -left-28 h-[360px] w-[360px] rounded-full bg-white/5 blur-3xl" />
+        <div className="absolute -top-24 -left-28 h-[360px] w-[360px] rounded-full bg-surface-high dark:bg-surface-highest blur-3xl" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[400px] w-[400px] rounded-full bg-gradient-to-b from-white/5 to-transparent blur-3xl opacity-50" />
       </div>
 
       {/* Header */}
       <div className="relative z-10 px-6 pt-12 flex items-center justify-between">
         {step > 1 ? (
-          <button onClick={prevStep} className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition">
+          <button onClick={prevStep} className="p-2 bg-surface-high dark:bg-surface-highest rounded-full hover:bg-surface-high dark:bg-surface-highest transition">
             <ArrowLeft size={24} />
           </button>
         ) : (
@@ -142,7 +142,7 @@ export default function SetupFinanceiro() {
       <div className="relative z-10 flex-1 flex flex-col px-8 pt-8 overflow-y-auto no-scrollbar">
         {step === 1 && (
           <div className="flex flex-col items-center justify-center min-h-full text-center">
-            <div className="mb-8 p-6 bg-white/5 rounded-full backdrop-blur-sm border border-white/10 animate-pulse">
+            <div className="mb-8 p-6 bg-surface-high dark:bg-surface-highest rounded-full backdrop-blur-sm border border-white/10 animate-pulse">
               <CurrencyDollar size={48} className="text-green-400" />
             </div>
             <h1 className="text-3xl font-bold mb-3 tracking-tight">Qual sua renda base?</h1>
@@ -155,7 +155,7 @@ export default function SetupFinanceiro() {
                 placeholder="Ex: 3500"
                 value={renda}
                 onChange={(e) => setRenda(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-3xl py-6 pl-14 pr-6 text-2xl font-semibold outline-none focus:border-white/30 focus:bg-white/10 transition-all text-white placeholder:text-white/10"
+                className="w-full bg-surface-high dark:bg-surface-highest border border-white/10 rounded-3xl py-6 pl-14 pr-6 text-2xl font-semibold outline-none focus:border-white/30 focus:bg-surface-high dark:bg-surface-highest transition-all text-white placeholder:text-white/10"
               />
             </div>
           </div>
@@ -169,8 +169,8 @@ export default function SetupFinanceiro() {
             </div>
             <div className="space-y-4 pb-10">
               {despesas.map((d) => (
-                <div key={d.id} className="bg-white/5 border border-white/10 rounded-2xl p-4 flex items-center gap-4">
-                  <div className="h-10 w-10 rounded-xl bg-white/5 flex items-center justify-center text-white/70">
+                <div key={d.id} className="bg-surface-high dark:bg-surface-highest border border-white/10 rounded-2xl shadow-sm dark:shadow-none p-4 flex items-center gap-4">
+                  <div className="h-10 w-10 rounded-xl bg-surface-high dark:bg-surface-highest flex items-center justify-center text-white/70">
                     {d.icon}
                   </div>
                   <div className="flex-1">
@@ -200,7 +200,7 @@ export default function SetupFinanceiro() {
             </div>
             <div className="space-y-4 pb-10">
               {dividas.map((d) => (
-                <div key={d.id} className="bg-white/5 border border-white/10 rounded-2xl p-5 space-y-4 relative">
+                <div key={d.id} className="bg-surface-high dark:bg-surface-highest border border-white/10 rounded-2xl shadow-sm dark:shadow-none p-5 space-y-4 relative">
                   <button 
                     onClick={() => removeDivida(d.id)}
                     className="absolute top-4 right-4 text-white/20 hover:text-red-400 transition"
@@ -214,7 +214,7 @@ export default function SetupFinanceiro() {
                       placeholder="Ex: Banco X, Cartão Y"
                       value={d.credor}
                       onChange={(e) => handleDividaChange(d.id, 'credor', e.target.value)}
-                      className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-sm outline-none focus:border-white/30"
+                      className="w-full bg-surface/40 border border-white/10 rounded-xl p-3 text-sm outline-none focus:border-white/30"
                     />
                   </div>
                   <div>
@@ -226,7 +226,7 @@ export default function SetupFinanceiro() {
                         placeholder="0,00"
                         value={d.parcela}
                         onChange={(e) => handleDividaChange(d.id, 'parcela', e.target.value)}
-                        className="w-full bg-black/40 border border-white/10 rounded-xl p-3 pl-10 text-sm outline-none focus:border-white/30"
+                        className="w-full bg-surface/40 border border-white/10 rounded-xl p-3 pl-10 text-sm outline-none focus:border-white/30"
                       />
                     </div>
                   </div>
@@ -234,7 +234,7 @@ export default function SetupFinanceiro() {
               ))}
               <button 
                 onClick={addDivida}
-                className="w-full py-4 border border-dashed border-white/20 rounded-2xl flex items-center justify-center gap-2 text-white/40 hover:text-white hover:border-white/40 transition"
+                className="w-full py-4 border border-dashed border-white/20 rounded-2xl shadow-sm dark:shadow-none flex items-center justify-center gap-2 text-white/40 hover:text-white hover:border-white/40 transition"
               >
                 <Plus size={18} />
                 <span className="text-xs font-bold uppercase tracking-widest">Adicionar outra dívida</span>
@@ -251,8 +251,8 @@ export default function SetupFinanceiro() {
           disabled={loading || (step === 1 && !renda)}
           className={`w-full py-5 rounded-full flex items-center justify-center gap-3 transition-all duration-300 ${
             (step === 1 && !renda) || loading
-              ? "bg-white/5 text-white/20 cursor-not-allowed"
-              : "bg-white text-black font-bold hover:scale-[0.98] active:scale-95 shadow-xl shadow-white/10"
+              ? "bg-surface-high dark:bg-surface-highest text-white/20 cursor-not-allowed"
+              : "bg-on-surface text-surface-lowest dark:bg-white dark:text-black font-bold hover:scale-[0.98] active:scale-95 shadow-xl shadow-white/10"
           }`}
         >
           {loading ? (

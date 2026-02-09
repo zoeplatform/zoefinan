@@ -74,46 +74,46 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white/70" />
+      <div className="min-h-screen bg-surface flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-on-surface-variant" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-black pb-24 md:pb-8">
-      {/* Background premium (mesma identidade do onboarding) */}
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-24 -left-28 h-[360px] w-[360px] rounded-full bg-white/10 blur-3xl" />
-        <div className="absolute -bottom-28 -right-20 h-[420px] w-[420px] rounded-full bg-white/10 blur-3xl" />
+    <div className="min-h-screen relative overflow-hidden bg-surface pb-24 md:pb-8 transition-colors duration-300">
+      {/* Background premium (apenas no escuro) */}
+      <div className="pointer-events-none absolute inset-0 dark:block hidden">
+        <div className="absolute -top-24 -left-28 h-[360px] w-[360px] rounded-full bg-white/5 blur-3xl" />
+        <div className="absolute -bottom-28 -right-20 h-[420px] w-[420px] rounded-full bg-white/5 blur-3xl" />
 
         {/* Orbe animado */}
         <div className="absolute left-1/2 top-[6%] -translate-x-1/2">
-          <div className="h-[460px] w-[460px] rounded-full bg-gradient-to-b from-orange-400/55 via-purple-500/45 to-blue-500/45 opacity-70 blur-[2px] animate-orb" />
-          <div className="absolute inset-0 rounded-full bg-black/55 blur-2xl" />
+          <div className="h-[460px] w-[460px] rounded-full bg-gradient-to-b from-orange-400/40 via-purple-500/30 to-blue-500/30  blur-[2px] animate-orb" />
+    
         </div>
 
         {/* linhas suaves */}
-        <div className="absolute inset-0 opacity-25">
-          <div className="absolute left-[-10%] top-[14%] h-[2px] w-[70%] rotate-12 bg-white/20 blur-[0.5px]" />
-          <div className="absolute right-[-15%] top-[34%] h-[2px] w-[75%] -rotate-12 bg-white/15 blur-[0.5px]" />
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute left-[-10%] top-[14%] h-[2px] w-[70%] rotate-12 bg-white/10 blur-[0.5px]" />
+          <div className="absolute right-[-15%] top-[34%] h-[2px] w-[75%] -rotate-12 bg-white/10 blur-[0.5px]" />
         </div>
       </div>
 
       {/* Conteúdo */}
       <div className="relative z-10 px-6 pt-8 max-w-5xl mx-auto">
         {/* Header padronizado */}
-        <header className="flex items-center justify-between mb-6">
+        <header className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight text-white">
+            <h1 className="text-2xl font-black tracking-tighter text-on-surface uppercase">
               ZoeFinan
             </h1>
-            <p className="text-sm text-white/60 mt-1">Visão geral</p>
+            <p className="text-[10px] text-on-surface-variant font-bold uppercase tracking-widest mt-1">Visão geral da conta</p>
           </div>
 
           <button
             onClick={() => auth.signOut()}
-            className="md:hidden rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm text-white/80 backdrop-blur hover:bg-white/10 transition"
+            className="md:hidden rounded-2xl border border-default bg-surface-lowest dark:bg-surface-high px-5 py-2.5 text-[10px] font-black uppercase tracking-widest text-on-surface-medium backdrop-blur hover:bg-surface-high dark:hover:bg-surface-highest transition shadow-sm dark:shadow-none"
           >
             Sair
           </button>
@@ -127,22 +127,22 @@ export default function Home() {
             {/* Ações */}
             <ActionButtons />
             
-            {/* Artigos */}
+            {/* Artigos Banner */}
             <div className="mt-4">
               <button
                 onClick={() => navigate("/artigos")}
-                className="w-full card-pill border border-white/12 bg-white/5 px-5 py-4 text-left backdrop-blur transition hover:bg-white/10"
+                className="w-full rounded-[24px] border border-default bg-surface-lowest dark:bg-surface-high px-6 py-6 text-left transition hover:bg-surface-low dark:hover:bg-surface-highest shadow-md dark:shadow-none group"
               >
                 <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-semibold text-white">
-                      📚 Artigos sobre Saúde Financeira
+                  <div className="min-w-0">
+                    <p className="text-sm font-black text-on-surface uppercase tracking-tight">
+                      📚 Saúde Financeira
                     </p>
-                    <p className="text-xs text-white/60 mt-1">
+                    <p className="text-xs text-on-surface-variant mt-1 font-medium">
                       Dicas práticas para evoluir seu planejamento
                     </p>
                   </div>
-                  <span className="h-10 w-10 grid place-items-center rounded-full border border-white/15 bg-white/10 text-white">
+                  <span className="h-12 w-12 grid place-items-center rounded-2xl border border-default bg-surface-high dark:bg-surface-highest text-on-surface group-hover:scale-110 transition-transform">
                     →
                   </span>
                 </div>

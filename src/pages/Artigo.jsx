@@ -115,14 +115,14 @@ export default function Artigo() {
 
   if (!artigo) {
     return (
-      <div className="min-h-screen bg-black px-6 pt-8 pb-24 text-white/70">
+      <div className="min-h-screen bg-surface px-6 pt-8 pb-24 text-on-surface-variant transition-colors duration-300">
         <button
           onClick={() => navigate("/artigos")}
-          className="h-10 w-10 rounded-full bg-white/10 border border-white/10 flex items-center justify-center active:scale-[0.98] transition"
+          className="h-10 w-10 rounded-full bg-surface-lowest dark:bg-surface-high border border-default flex items-center justify-center active:scale-[0.98] transition shadow-sm dark:shadow-none"
           type="button"
           aria-label="Voltar"
         >
-          <ArrowLeft size={18} className="text-white/85" />
+          <ArrowLeft size={18} className="text-on-surface" />
         </button>
         <p className="mt-6">Artigo não encontrado.</p>
       </div>
@@ -130,47 +130,47 @@ export default function Artigo() {
   }
 
   return (
-    <div className="min-h-screen bg-black px-6 pt-8 pb-24 relative overflow-hidden">
-      {/* Glow discreto (igual ao resto) */}
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-24 -left-24 h-[320px] w-[320px] rounded-full bg-white/10 blur-3xl" />
-        <div className="absolute -bottom-32 -right-24 h-[420px] w-[420px] rounded-full bg-white/10 blur-3xl" />
-        <div className="absolute left-1/2 top-[18%] -translate-x-1/2 h-[420px] w-[420px] rounded-full bg-gradient-to-b from-orange-400/35 via-purple-500/25 to-blue-500/25 blur-2xl opacity-60" />
+    <div className="min-h-screen bg-surface px-6 pt-8 pb-24 relative overflow-hidden transition-colors duration-300">
+      {/* Glow discreto - apenas no escuro */}
+      <div className="pointer-events-none absolute inset-0 dark:block hidden">
+        <div className="absolute -top-24 -left-24 h-[320px] w-[320px] rounded-full bg-white/5 blur-3xl" />
+        <div className="absolute -bottom-32 -right-24 h-[420px] w-[420px] rounded-full bg-white/5 blur-3xl" />
+        <div className="absolute left-1/2 top-[18%] -translate-x-1/2 h-[420px] w-[420px] rounded-full bg-gradient-to-b from-orange-400/20 via-purple-500/15 to-blue-500/15 blur-2xl opacity-55" />
       </div>
 
-      <div className="relative z-10">
+      <div className="relative z-10 max-w-3xl mx-auto">
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">
           <button
             onClick={() => navigate("/artigos")}
-            className="h-10 w-10 rounded-full bg-white/10 border border-white/10 flex items-center justify-center active:scale-[0.98] transition"
+            className="h-10 w-10 rounded-full bg-surface-lowest dark:bg-surface-high border border-default flex items-center justify-center active:scale-[0.98] transition shadow-sm dark:shadow-none"
             aria-label="Voltar"
             type="button"
           >
-            <ArrowLeft size={18} className="text-white/85" />
+            <ArrowLeft size={18} className="text-on-surface" />
           </button>
 
-          <h1 className="text-3xl font-semibold text-white">ZoeFinan</h1>
+          <h1 className="text-3xl font-semibold text-on-surface">ZoeFinan</h1>
         </div>
 
-        {/* Conteúdo em “bloco” */}
-        <article className="rounded-2xl bg-zinc-900/80 border border-white/10 p-6 prose-article">
-          <h1>{artigo.titulo}</h1>
+        {/* Conteúdo */}
+        <article className="rounded-2xl bg-surface-lowest dark:bg-surface-high border border-default p-6 prose-article shadow-sm dark:shadow-none">
+          <h1 className="text-on-surface">{artigo.titulo}</h1>
 
           {/* Versículo em destaque */}
-          <blockquote>
-            <p>“{artigo.verso.texto}”</p>
-            <p className="muted mt-2">{artigo.verso.ref}</p>
+          <blockquote className="border-l-4 border-accent-primary/30 pl-4 my-6">
+            <p className="italic text-on-surface-medium">“{artigo.verso.texto}”</p>
+            <p className="text-xs text-on-surface-variant mt-2">{artigo.verso.ref}</p>
           </blockquote>
 
           {artigo.conteudo.map((b, idx) => {
-            if (b.tipo === "h2") return <h2 key={idx}>{b.texto}</h2>;
-            if (b.tipo === "h3") return <h3 key={idx}>{b.texto}</h3>;
-            if (b.tipo === "p") return <p key={idx}>{b.texto}</p>;
-            if (b.tipo === "hr") return <hr key={idx} />;
+            if (b.tipo === "h2") return <h2 key={idx} className="text-on-surface">{b.texto}</h2>;
+            if (b.tipo === "h3") return <h3 key={idx} className="text-on-surface">{b.texto}</h3>;
+            if (b.tipo === "p") return <p key={idx} className="text-on-surface-medium">{b.texto}</p>;
+            if (b.tipo === "hr") return <hr key={idx} className="border-default my-6" />;
             if (b.tipo === "ul")
               return (
-                <ul key={idx}>
+                <ul key={idx} className="list-disc pl-5 space-y-2 my-4 text-on-surface-medium">
                   {b.itens.map((it, i) => (
                     <li key={i}>{it}</li>
                   ))}
@@ -178,15 +178,15 @@ export default function Artigo() {
               );
             if (b.tipo === "blockquote")
               return (
-                <blockquote key={idx}>
+                <blockquote key={idx} className="border-l-4 border-accent-primary/30 pl-4 my-6 italic text-on-surface-medium">
                   <p>{b.texto}</p>
                 </blockquote>
               );
             if (b.tipo === "callout")
               return (
-                <div key={idx} className="callout">
-                  <div className="callout-title">{b.titulo}</div>
-                  <div className="callout-text">{b.texto}</div>
+                <div key={idx} className="bg-surface-low dark:bg-surface-highest border border-default rounded-xl p-4 my-6 shadow-sm dark:shadow-none">
+                  <div className="font-bold text-on-surface mb-1">{b.titulo}</div>
+                  <div className="text-sm text-on-surface-medium">{b.texto}</div>
                 </div>
               );
             return null;
@@ -195,7 +195,7 @@ export default function Artigo() {
 
         <button
           onClick={() => navigate("/artigos")}
-          className="mt-5 w-full rounded-2xl bg-white text-black p-4 font-semibold active:scale-[0.99] transition"
+          className="mt-5 w-full rounded-2xl bg-on-surface text-surface-lowest dark:bg-white dark:text-black p-4 font-semibold active:scale-[0.99] transition shadow-lg"
           type="button"
         >
           Voltar para Educação

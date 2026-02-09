@@ -39,7 +39,7 @@ export default function Cadastro() {
         criadoEm: new Date(),
       });
 
-      navigate("/lancamentos");
+      navigate("/home");
     } catch (error) {
       setErro("Erro ao cadastrar: " + (error?.message || "tente novamente"));
     } finally {
@@ -48,13 +48,13 @@ export default function Cadastro() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black px-6">
+    <div className="min-h-screen flex items-center justify-center bg-surface px-6 transition-colors duration-300">
       <div className="w-full max-w-md">
         {/* Identidade / Glow */}
         <div className="mb-10 text-center">
-          <div className="mx-auto mb-6 h-28 w-28 rounded-full bg-gradient-to-br from-orange-500 via-pink-500 to-purple-600" />
-          <h1 className="text-3xl font-semibold text-white">Criar conta</h1>
-          <p className="mt-2 text-sm text-zinc-400">
+          <div className="mx-auto mb-6 h-28 w-28 rounded-full bg-gradient-to-br from-orange-500 via-pink-500 to-purple-600 shadow-xl" />
+          <h1 className="text-3xl font-black text-on-surface tracking-tighter uppercase">Criar Conta</h1>
+          <p className="mt-2 text-sm text-on-surface-variant font-medium">
             Comece agora e organize suas finanças em um só lugar
           </p>
         </div>
@@ -62,62 +62,80 @@ export default function Cadastro() {
         {/* Card */}
         <form
           onSubmit={handleCadastro}
-          className="rounded-2xl bg-zinc-900 p-6 shadow-lg"
+          className="rounded-[32px] bg-surface-lowest dark:bg-surface-high border border-default p-8 shadow-xl dark:shadow-none transition-all duration-300"
         >
           <div className="space-y-4">
-            <input
-              type="email"
-              placeholder="Email"
-              className="w-full rounded-xl bg-zinc-800 px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-white"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
+            <div className="space-y-1">
+              <label className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1">Email</label>
+              <input
+                type="email"
+                placeholder="seu@email.com"
+                className="w-full rounded-2xl bg-surface-low dark:bg-black/10 border border-default px-4 py-4 text-on-surface placeholder:text-on-surface-disabled focus:outline-none focus:border-strong transition-all"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                autoComplete="email"
+              />
+            </div>
 
-            <input
-              type="password"
-              placeholder="Senha"
-              className="w-full rounded-xl bg-zinc-800 px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-white"
-              value={senha}
-              onChange={(e) => setSenha(e.target.value)}
-              required
-            />
+            <div className="space-y-1">
+              <label className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1">Senha</label>
+              <input
+                type="password"
+                placeholder="••••••••"
+                className="w-full rounded-2xl bg-surface-low dark:bg-black/10 border border-default px-4 py-4 text-on-surface placeholder:text-on-surface-disabled focus:outline-none focus:border-strong transition-all"
+                value={senha}
+                onChange={(e) => setSenha(e.target.value)}
+                required
+                autoComplete="new-password"
+              />
+            </div>
 
-            <input
-              type="password"
-              placeholder="Confirmar senha"
-              className="w-full rounded-xl bg-zinc-800 px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-white"
-              value={confirmarSenha}
-              onChange={(e) => setConfirmarSenha(e.target.value)}
-              required
-            />
+            <div className="space-y-1">
+              <label className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1">Confirmar Senha</label>
+              <input
+                type="password"
+                placeholder="••••••••"
+                className="w-full rounded-2xl bg-surface-low dark:bg-black/10 border border-default px-4 py-4 text-on-surface placeholder:text-on-surface-disabled focus:outline-none focus:border-strong transition-all"
+                value={confirmarSenha}
+                onChange={(e) => setConfirmarSenha(e.target.value)}
+                required
+                autoComplete="new-password"
+              />
+            </div>
           </div>
 
-          {erro && <p className="mt-4 text-sm text-red-500">{erro}</p>}
+          {erro && (
+            <div className="mt-4 p-3 rounded-xl bg-error-bg border border-error/20 text-xs text-error font-bold text-center animate-in fade-in slide-in-from-top-1">
+              {erro}
+            </div>
+          )}
 
           <button
             type="submit"
             disabled={loading}
-            className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-white py-3 font-medium text-black transition hover:bg-zinc-200 disabled:opacity-60"
+            className="mt-8 flex w-full items-center justify-center gap-2 rounded-2xl bg-on-surface text-surface-lowest dark:bg-white dark:text-black py-4 font-black text-xs uppercase tracking-[0.2em] shadow-xl hover:scale-[0.98] active:scale-95 transition-all disabled:opacity-60"
           >
-            {loading ? "Criando..." : "Criar conta"}
-            <ArrowRight size={18} />
+            {loading ? "Criando..." : "Criar Minha Conta"}
+            {!loading && <ArrowRight size={18} weight="bold" />}
           </button>
 
-          <p className="mt-4 text-center text-sm text-zinc-400">
-            Já tem conta?{" "}
-            <Link
-              to="/login"
-              className="text-white underline underline-offset-4 hover:opacity-90"
-            >
-              Entrar
-            </Link>
-          </p>
+          <div className="mt-8 pt-6 border-t border-default text-center">
+            <p className="text-sm text-on-surface-variant">
+              Já tem uma conta?{" "}
+              <Link
+                to="/login"
+                className="text-on-surface font-black uppercase text-xs tracking-widest hover:underline underline-offset-4"
+              >
+                Entrar
+              </Link>
+            </p>
+          </div>
         </form>
 
         {/* Rodapé */}
-        <p className="mt-6 text-center text-xs text-zinc-500">
-          © {new Date().getFullYear()} ZoeFinance
+        <p className="mt-8 text-center text-[10px] font-black text-on-surface-disabled uppercase tracking-[0.3em]">
+          © {new Date().getFullYear()} ZoeFinan • Versão 1.1.0
         </p>
       </div>
     </div>

@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { db, auth } from "../firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
-import { Receipt, CreditCard, TrendUp } from "phosphor-react";
+import { Receipt, CreditCard, TrendUp, Plus } from "phosphor-react";
 import { getCurrentMonthKey } from "../utils/dateUtils";
+import { useNavigate } from "react-router-dom";
 
 export default function TransactionsList() {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -50,7 +52,6 @@ export default function TransactionsList() {
 
               setTransactions(todas.slice(0, 5));
             } else {
-              // Fallback para dados fixos se não houver histórico do mês atual
               const despesas = (data.despesasFixas || []).map((d) => ({
                 ...d,
                 tipo: "despesa",
@@ -81,54 +82,73 @@ export default function TransactionsList() {
 
   if (loading) {
     return (
-      <p className="text-center text-white/60 text-sm py-6">
-        Carregando lançamentos...
-      </p>
+      <div className="p-8 text-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-on-surface-variant mx-auto mb-4" />
+        <p className="text-on-surface-variant text-[10px] font-black uppercase tracking-widest">Carregando lançamentos...</p>
+      </div>
     );
   }
 
   return (
-    <div className="mt-6">
-      <h3 className="text-lg font-semibold text-white mb-4">
-        Últimos Lançamentos
-      </h3>
+    <div className="rounded-[32px] border border-default bg-surface-lowest dark:bg-surface-high p-8 shadow-xl dark:shadow-none transition-all duration-300">
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h3 className="text-lg font-black text-on-surface uppercase tracking-tighter">Atividade Recente</h3>
+          <p className="text-[10px] text-on-surface-variant font-bold uppercase tracking-widest mt-1">Últimos lançamentos</p>
+        </div>
+        <button 
+          onClick={() => navigate("/lancamentos")}
+          className="h-10 w-10 rounded-xl bg-surface-high dark:bg-surface-highest border border-default flex items-center justify-center text-on-surface hover:scale-110 transition-all"
+        >
+          <Plus size={20} weight="bold" />
+        </button>
+      </div>
 
-      <div className="space-y-3">
+      <div className="space-y-4">
         {transactions.length === 0 ? (
-          <div className="card-pill border border-dashed border-white/15 bg-white/5 p-5 text-center backdrop-blur">
-            <p className="text-sm text-white/70">Nenhum lançamento encontrado.</p>
-            <p className="text-xs text-white/50 mt-1">
-              Adicione despesas ou dívidas para ver seu histórico aqui.
-            </p>
+          <div className="rounded-2xl border border-dashed border-default bg-surface-low dark:bg-black/10 p-8 text-center">
+            <p className="text-xs font-bold text-on-surface-medium uppercase tracking-tight">Nenhum lançamento encontrado</p>
+            <p className="text-[10px] text-on-surface-variant mt-1 uppercase tracking-widest">Adicione despesas para ver seu histórico</p>
           </div>
         ) : (
           transactions.map((t) => (
             <div
               key={t.id ?? `${t.tipo}-${t.descricao}-${t.valor}`}
-              className="flex justify-between items-center card-pill border border-white/12 bg-zinc-900/70 p-4 shadow-sm backdrop-blur"
+              className="flex justify-between items-center p-4 rounded-2xl bg-surface-low dark:bg-black/10 border border-default group hover:bg-surface-high dark:hover:bg-surface-low transition-all"
             >
-              <div className="flex items-center gap-3">
-                <div className={`h-11 w-11 rounded-xl border border-white/10 bg-white/5 grid place-items-center ${t.tipo === 'renda' ? 'text-green-400' : 'text-white'}`}>
+              <div className="flex items-center gap-4">
+                <div className={`h-12 w-12 rounded-xl border border-default flex items-center justify-center ${
+                  t.tipo === 'renda' ? 'bg-success-bg text-success' : 
+                  t.tipo === 'divida' ? 'bg-info-bg text-info' : 
+                  'bg-surface-high dark:bg-surface-highest text-on-surface-medium'
+                }`}>
                   {t.tipo === "despesa" ? <Receipt size={20} /> : t.tipo === "divida" ? <CreditCard size={20} /> : <TrendUp size={20} />}
                 </div>
 
                 <div>
-                  <p className="font-semibold text-sm text-white">
+                  <p className="text-sm font-black text-on-surface uppercase tracking-tight">
                     {t.descricao}
                   </p>
-                  <p className="text-[10px] text-white/55 uppercase tracking-wide">
-                    {t.tipo === "despesa" ? "Despesa" : t.tipo === "divida" ? "Parcela de Dívida" : "Renda Extra"}
+                  <p className="text-[10px] text-on-surface-variant font-bold uppercase tracking-widest">
+                    {t.tipo === "despesa" ? "Despesa" : t.tipo === "divida" ? "Dívida" : "Renda Extra"}
                   </p>
                 </div>
               </div>
 
-              <span className={`font-semibold text-sm ${t.tipo === 'renda' ? 'text-green-400' : 'text-red-300'}`}>
-                {t.tipo === 'renda' ? '+' : '-'} R$ {Number(t.valor || 0).toLocaleString("pt-BR")}
+              <span className={`text-sm font-black ${t.tipo === 'renda' ? 'text-success' : 'text-on-surface'}`}>
+                {t.tipo === 'renda' ? '+' : '-'} R$ {Number(t.valor || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
               </span>
             </div>
           ))
         )}
       </div>
+
+      <button 
+        onClick={() => navigate("/lancamentos")}
+        className="w-full mt-8 py-4 rounded-2xl border border-default bg-surface-high dark:bg-surface-highest text-[10px] font-black text-on-surface-medium uppercase tracking-[0.2em] hover:bg-on-surface hover:text-surface-lowest dark:hover:bg-white dark:hover:text-black transition-all"
+      >
+        Ver Extrato Completo
+      </button>
     </div>
   );
 }

@@ -11,6 +11,8 @@ import {
   UploadSimple,
   Trash,
   Warning,
+  Moon,
+  Sun,
 } from "phosphor-react";
 import { auth, db } from "../firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
@@ -22,10 +24,17 @@ export default function Perfil() {
   const [entered, setEntered] = useState(false);
   const [loading, setLoading] = useState(true);
   const [reserva, setReserva] = useState(0);
+  const [metaSugerida, setMetaSugerida] = useState(10000);
   const [novoValor, setNovoValor] = useState("");
   const [showAdd, setShowAdd] = useState(false);
   const [backupLoading, setBackupLoading] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  
+  // Padrão agora é DARK se não houver nada no localStorage
+  const [isDark, setIsDark] = useState(() => {
+    const saved = localStorage.getItem("zoe-theme");
+    return saved === null ? true : saved === "dark";
+  });
   
   const fileInputRef = useRef(null);
   const [user, setUser] = useState(auth.currentUser);
@@ -34,7 +43,7 @@ export default function Perfil() {
     const unsubscribe = onAuthStateChanged(auth, (u) => {
       if (u) {
         setUser(u);
-        carregarReserva(u.uid);
+        carregarDados(u.uid);
       } else {
         navigate("/login");
       }
@@ -42,15 +51,22 @@ export default function Perfil() {
 
     const raf = requestAnimationFrame(() => setEntered(true));
     
-    async function carregarReserva(uid) {
+    async function carregarDados(uid) {
       try {
         const userRef = doc(db, "usuarios", uid);
         const docSnap = await getDoc(userRef);
         if (docSnap.exists()) {
-          setReserva(docSnap.data().reservaEmergencia || 0);
+          const data = docSnap.data();
+          setReserva(data.reservaEmergencia || 0);
+          
+          const despesasFixas = data.despesasFixas || [];
+          const totalDespesas = despesasFixas.reduce((sum, d) => sum + (Number(d.valor) || 0), 0);
+          if (totalDespesas > 0) {
+            setMetaSugerida(totalDespesas * 6);
+          }
         }
       } catch (e) {
-        console.error("Erro ao carregar reserva:", e);
+        console.error("Erro ao carregar dados:", e);
       } finally {
         setLoading(false);
       }
@@ -61,6 +77,13 @@ export default function Perfil() {
       cancelAnimationFrame(raf);
     };
   }, [navigate]);
+
+  const toggleTheme = () => {
+    const newTheme = isDark ? "light" : "dark";
+    setIsDark(!isDark);
+    localStorage.setItem("zoe-theme", newTheme);
+    window.dispatchEvent(new Event("themeChanged"));
+  };
 
   async function handleAddReserva() {
     if (!novoValor || isNaN(novoValor) || !user) return;
@@ -163,63 +186,60 @@ export default function Perfil() {
     }
   }
 
-  const cardBase = "rounded-2xl bg-zinc-900/80 border border-white/10";
+  const cardBase = "rounded-[32px] bg-surface-lowest dark:bg-surface-high border border-default shadow-xl dark:shadow-none backdrop-blur-xl transition-all duration-300";
 
-  const Item = ({ icon, title, subtitle, onClick, danger, loading: itemLoading }) => (
+  const Item = ({ icon, title, subtitle, onClick, danger, loading: itemLoading, rightElement }) => (
     <button
       type="button"
       onClick={onClick}
       disabled={itemLoading}
-      className={`w-full text-left ${cardBase} p-5 active:scale-[0.99] transition disabled:opacity-50`}
+      className={`w-full text-left ${cardBase} p-6 active:scale-[0.99] transition disabled:opacity-50 group`}
       aria-label={title}
     >
       <div className="flex items-center justify-between gap-4">
-        <div className="flex items-start gap-3 min-w-0">
+        <div className="flex items-start gap-4 min-w-0">
           <div
-            className={`mt-0.5 h-10 w-10 rounded-xl flex items-center justify-center border ${
+            className={`mt-0.5 h-12 w-12 rounded-2xl flex items-center justify-center border transition-colors ${
               danger
-                ? "bg-red-500/10 border-red-500/20"
-                : "bg-white/5 border-white/10"
+                ? "bg-error-bg border-error/20 text-error"
+                : "bg-surface-high dark:bg-surface-highest border-default text-on-surface-variant group-hover:text-on-surface"
             }`}
           >
             {itemLoading ? (
-              <div className="h-4 w-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+              <div className="h-5 w-5 border-2 border-on-surface-disabled border-t-on-surface rounded-full animate-spin" />
             ) : icon}
           </div>
 
           <div className="min-w-0">
             <div
-              className={`text-[15px] font-semibold leading-snug ${
-                danger ? "text-red-200" : "text-white"
+              className={`text-sm font-black uppercase tracking-tight ${
+                danger ? "text-error" : "text-on-surface"
               }`}
             >
               {title}
             </div>
             {subtitle ? (
-              <div className="mt-1 text-sm text-white/55 line-clamp-1">
+              <div className="mt-1 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant line-clamp-1">
                 {subtitle}
               </div>
             ) : null}
           </div>
         </div>
 
-        <div className={`${danger ? "text-red-200/80" : "text-white/70"}`}>
-          <CaretRight size={18} />
+        <div className={`${danger ? "text-error/80" : "text-on-surface-variant"}`}>
+          {rightElement || <CaretRight size={18} weight="bold" />}
         </div>
       </div>
     </button>
   );
 
   return (
-    <div className="min-h-screen bg-black relative overflow-hidden md:overflow-auto">
-      {/* Background Premium */}
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-24 -left-24 h-[320px] w-[320px] rounded-full bg-white/5 blur-3xl" />
-        <div className="absolute -bottom-32 -right-24 h-[420px] w-[420px] rounded-full bg-white/5 blur-3xl" />
-        <div className="absolute left-1/2 top-[18%] -translate-x-1/2 h-[420px] w-[420px] rounded-full bg-gradient-to-b from-orange-400/20 via-purple-500/15 to-blue-500/15 blur-2xl opacity-55" />
+    <div className="min-h-screen bg-surface relative overflow-hidden md:overflow-auto transition-colors duration-300">
+      {/* Background Premium (apenas no escuro) */}
+      <div className="pointer-events-none absolute inset-0 dark:block hidden">
+        <div className="absolute left-1/2 top-[18%] -translate-x-1/2 h-[420px] w-[420px] rounded-full bg-gradient-to-b from-orange-400/20 via-purple-500/15 to-blue-500/15 blur-2xl " />
       </div>
 
-      {/* Layout Mobile (Drawer) vs Desktop (Centered) */}
       <div
         className={`relative z-10 w-full max-w-2xl mx-auto px-6 pt-8 pb-32 md:pb-8 transition-all duration-500
         ${entered ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"}`}
@@ -228,145 +248,181 @@ export default function Perfil() {
         <div className="flex items-center gap-4 mb-8">
           <button
             onClick={() => navigate(-1)}
-            className="h-12 w-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center active:scale-95 transition-all md:hidden"
+            className="h-12 w-12 rounded-2xl bg-surface-lowest dark:bg-surface-high border border-default flex items-center justify-center active:scale-95 transition-all md:hidden shadow-sm dark:shadow-none"
             aria-label="Voltar"
           >
-            <ArrowLeft size={20} className="text-white" />
+            <ArrowLeft size={20} className="text-on-surface" />
           </button>
           <div>
-            <h1 className="text-2xl font-black text-white tracking-tight uppercase">Perfil</h1>
-            <p className="text-[10px] text-white/40 font-bold uppercase tracking-[0.2em]">Gerenciamento de conta</p>
+            <h1 className="text-2xl font-black text-on-surface tracking-tight uppercase">Perfil</h1>
+            <p className="text-[10px] text-on-surface-variant font-bold uppercase tracking-[0.2em]">Gerenciamento de conta</p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Coluna 1: Dados do Usuário e Reserva */}
           <div className="space-y-6">
-            {/* Card do Usuário */}
-            <div className={`${cardBase} p-6`}>
-              <div className="flex items-center gap-4">
-                <div className="h-16 w-16 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center">
-                  <span className="text-xl text-white font-black">{iniciais}</span>
+            <div className={`${cardBase} p-8`}>
+              <div className="flex items-center gap-5">
+                <div className="h-16 w-16 rounded-[20px] bg-surface-high dark:bg-surface-highest border border-default flex items-center justify-center shadow-inner">
+                  <span className="text-xl text-on-surface font-black">{iniciais}</span>
                 </div>
                 <div className="min-w-0">
-                  <div className="text-lg text-white font-bold leading-tight truncate">{nome}</div>
-                  <div className="text-sm text-white/40 truncate">{email}</div>
+                  <div className="text-lg text-on-surface font-black uppercase tracking-tight truncate">{nome}</div>
+                  <div className="text-xs text-on-surface-variant font-medium truncate">{email}</div>
                 </div>
               </div>
               {uid && (
-                <div className="mt-4 pt-4 border-t border-white/5">
-                  <p className="text-[8px] text-white/20 font-black uppercase tracking-widest">Identificador Único</p>
-                  <p className="text-[10px] text-white/30 font-mono break-all">{uid}</p>
+                <div className="mt-6 pt-6 border-t border-default">
+                  <p className="text-[8px] text-on-surface-disabled font-black uppercase tracking-widest">Identificador Único</p>
+                  <p className="text-[10px] text-on-surface-variant font-mono break-all mt-1">{uid}</p>
                 </div>
               )}
             </div>
 
-            {/* Reserva de Emergência */}
-            <div className={`${cardBase} p-6 bg-gradient-to-br from-zinc-900/90 to-zinc-950`}>
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
-                    <Bank size={20} />
+            <div className={`${cardBase} p-8`}>
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-4">
+                  <div className="h-12 w-12 rounded-2xl bg-info-bg border border-info/20 flex items-center justify-center text-info">
+                    <Bank size={24} weight="duotone" />
                   </div>
                   <div>
-                    <h3 className="text-[10px] font-black text-white/30 uppercase tracking-widest">Reserva Atual</h3>
-                    <p className="text-2xl font-black text-white">R$ {reserva.toLocaleString('pt-BR')}</p>
+                    <h3 className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest">Reserva Atual</h3>
+                    <p className="text-2xl font-black text-on-surface">R$ {reserva.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
                   </div>
                 </div>
                 <button 
                   onClick={() => setShowAdd(!showAdd)}
-                  className="h-10 w-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white active:scale-95 transition"
+                  className="h-10 w-10 rounded-xl bg-surface-high dark:bg-surface-highest border border-default flex items-center justify-center text-on-surface hover:scale-110 transition shadow-sm"
                 >
-                  <Plus size={20} />
+                  <Plus size={20} weight="bold" />
                 </button>
               </div>
 
               {showAdd && (
-                <div className="space-y-3 mt-4 pt-4 border-t border-white/5 animate-in fade-in slide-in-from-top-2">
-                  <input
-                    type="number"
-                    value={novoValor}
-                    onChange={(e) => setNovoValor(e.target.value)}
-                    placeholder="Valor para adicionar"
-                    className="w-full bg-black border border-white/10 rounded-xl p-3 text-sm text-white placeholder:text-white/20 outline-none focus:border-white/30 transition-all"
-                  />
-                  <div className="flex gap-2">
-                    <button onClick={() => setShowAdd(false)} className="flex-1 bg-white/5 text-white/60 text-[10px] font-black p-3 rounded-xl border border-white/5">CANCELAR</button>
-                    <button onClick={handleAddReserva} className="flex-1 bg-white text-black text-[10px] font-black p-3 rounded-xl">CONFIRMAR</button>
+                <div className="space-y-3 mb-6 animate-in fade-in slide-in-from-top-2">
+                  <div className="relative">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-disabled text-sm font-bold">R$</span>
+                    <input
+                      type="number"
+                      placeholder="0,00"
+                      value={novoValor}
+                      onChange={(e) => setNovoValor(e.target.value)}
+                      className="w-full bg-surface-low dark:bg-black/10 border border-default rounded-2xl p-4 pl-10 text-sm text-on-surface placeholder:text-on-surface-disabled focus:border-strong outline-none transition-all"
+                    />
                   </div>
+                  <button
+                    onClick={handleAddReserva}
+                    className="w-full py-4 rounded-2xl bg-on-surface text-surface-lowest dark:bg-white dark:text-black font-black text-[10px] uppercase tracking-widest shadow-lg active:scale-95 transition-all"
+                  >
+                    Confirmar Aporte
+                  </button>
                 </div>
               )}
-              
-              <div className="mt-4 w-full bg-white/5 h-1.5 rounded-full overflow-hidden">
-                <div className="bg-blue-500 h-full transition-all duration-1000" style={{ width: `${Math.min((reserva / 10000) * 100, 100)}%` }} />
+
+              <div className="pt-6 border-t border-default">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest">Meta Sugerida</span>
+                  <span className="text-[10px] font-black text-on-surface uppercase">R$ {metaSugerida.toLocaleString('pt-BR')}</span>
+                </div>
+                <div className="h-2 w-full bg-surface-high dark:bg-surface-highest rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-info transition-all duration-1000"
+                    style={{ width: `${Math.min((reserva / (metaSugerida || 1)) * 100, 100)}%` }}
+                  />
+                </div>
               </div>
-              <p className="text-[8px] text-white/20 mt-2 text-right uppercase font-black tracking-widest">Meta sugerida: R$ 10.000,00</p>
             </div>
           </div>
 
-          {/* Coluna 2: Ações e Backup */}
-          <div className="space-y-6">
-            <div className="space-y-3">
-              <h3 className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] px-1">Dados e Segurança</h3>
-              
-              <Item
-                icon={<DownloadSimple size={18} className="text-white/80" />}
-                title="Exportar Backup"
-                subtitle="Salvar dados em arquivo JSON"
-                onClick={handleExportBackup}
-                loading={backupLoading}
-              />
+          <div className="space-y-4">
+            <h3 className="text-[10px] font-black text-on-surface-variant uppercase tracking-[0.2em] ml-2 mb-2">Preferências</h3>
+            
+            <Item
+              icon={isDark ? <Moon size={22} weight="bold" /> : <Sun size={22} weight="bold" />}
+              title="Tema da Interface"
+              subtitle={isDark ? "Modo Escuro Ativado" : "Modo Claro Ativado"}
+              onClick={toggleTheme}
+              rightElement={
+                <div className={`w-12 h-6 rounded-full p-1 transition-colors duration-300 ${isDark ? 'bg-on-surface' : 'bg-on-surface-disabled'}`}>
+                  <div className={`w-4 h-4 bg-surface-lowest rounded-full transition-transform duration-300 ${isDark ? 'translate-x-6' : 'translate-x-0'}`} />
+                </div>
+              }
+            />
 
-              <Item
-                icon={<UploadSimple size={18} className="text-white/80" />}
-                title="Importar Backup"
-                subtitle="Restaurar dados salvos"
-                onClick={() => fileInputRef.current?.click()}
-                loading={backupLoading}
-              />
-              <input type="file" ref={fileInputRef} onChange={handleImportBackup} accept=".json" className="hidden" />
+            <h3 className="text-[10px] font-black text-on-surface-variant uppercase tracking-[0.2em] ml-2 mt-6 mb-2">Dados e Segurança</h3>
 
-              <Item
-                icon={<Trash size={18} className="text-red-400" />}
-                title="Reiniciar Conta"
-                subtitle="Apagar tudo e começar do zero"
-                onClick={() => setShowResetConfirm(true)}
-                danger
-              />
+            <Item
+              icon={<DownloadSimple size={22} weight="bold" />}
+              title="Exportar Backup"
+              subtitle="Salvar dados em arquivo JSON"
+              onClick={handleExportBackup}
+              loading={backupLoading}
+            />
 
-              <Item
-                icon={<SignOut size={18} className="text-red-200/90" />}
-                title="Sair da Sessão"
-                subtitle="Encerrar acesso atual"
-                onClick={handleSair}
-                danger
-              />
-            </div>
+            <Item
+              icon={<UploadSimple size={22} weight="bold" />}
+              title="Importar Backup"
+              subtitle="Restaurar dados de arquivo"
+              onClick={() => fileInputRef.current?.click()}
+              loading={backupLoading}
+            />
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleImportBackup}
+              accept=".json"
+              className="hidden"
+            />
 
-            <div className="pt-4 text-center md:text-left">
-              <p className="text-[10px] text-white/20 font-black uppercase tracking-[0.3em]">ZoeFinan • Versão 1.0.0</p>
-            </div>
+            <Item
+              icon={<Warning size={22} weight="bold" />}
+              title="Reiniciar Conta"
+              subtitle="Limpar todos os lançamentos"
+              danger
+              onClick={() => setShowResetConfirm(true)}
+            />
+
+            <Item
+              icon={<SignOut size={22} weight="bold" />}
+              title="Sair da Conta"
+              onClick={handleSair}
+            />
           </div>
         </div>
+
+        {/* Modal de Confirmação de Reset */}
+        {showResetConfirm && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center px-6 bg-black/80 backdrop-blur-sm animate-in fade-in">
+            <div className={`${cardBase} w-full max-w-sm p-8 text-center`}>
+              <div className="h-16 w-16 rounded-full bg-error-bg border border-error/20 flex items-center justify-center text-error mx-auto mb-6">
+                <Warning size={32} weight="bold" />
+              </div>
+              <h3 className="text-xl font-black text-on-surface uppercase tracking-tight mb-2">Tem certeza?</h3>
+              <p className="text-sm text-on-surface-variant font-medium mb-8">
+                Esta ação irá apagar permanentemente todo o seu histórico financeiro. Não é possível desfazer.
+              </p>
+              <div className="space-y-3">
+                <button
+                  onClick={handleResetAccount}
+                  className="w-full py-4 rounded-2xl bg-error text-white font-black text-xs uppercase tracking-widest shadow-lg active:scale-95 transition-all"
+                >
+                  Sim, Reiniciar Tudo
+                </button>
+                <button
+                  onClick={() => setShowResetConfirm(false)}
+                  className="w-full py-4 rounded-2xl bg-surface-high dark:bg-surface-highest text-on-surface font-black text-xs uppercase tracking-widest active:scale-95 transition-all"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <p className="mt-12 text-center text-[10px] font-black text-on-surface-disabled uppercase tracking-[0.3em]">
+          ZoeFinan • Versão 1.1.0 • {new Date().getFullYear()}
+        </p>
       </div>
-
-      {/* Modal de Confirmação de Reset */}
-      {showResetConfirm && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center px-6">
-          <div className="absolute inset-0 bg-black/90 backdrop-blur-md" onClick={() => setShowResetConfirm(false)} />
-          <div className="relative w-full max-w-sm bg-zinc-900 border border-white/10 rounded-[32px] p-8 shadow-2xl animate-in zoom-in-95 duration-200">
-            <div className="h-16 w-16 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 mx-auto mb-6">
-              <Warning size={32} weight="bold" />
-            </div>
-            <h2 className="text-xl font-black text-white text-center mb-2 uppercase tracking-tighter">Reiniciar Conta?</h2>
-            <p className="text-white/40 text-xs text-center mb-8 leading-relaxed">Esta ação é irreversível. Todos os seus lançamentos, históricos e configurações serão apagados permanentemente.</p>
-            <div className="space-y-3">
-              <button onClick={handleResetAccount} disabled={backupLoading} className="w-full py-4 bg-red-500 text-white font-black rounded-2xl hover:bg-red-600 transition active:scale-95 disabled:opacity-50 uppercase text-[10px] tracking-widest">{backupLoading ? "Reiniciando..." : "Sim, apagar tudo"}</button>
-              <button onClick={() => setShowResetConfirm(false)} className="w-full py-4 bg-white/5 text-white/60 font-black rounded-2xl border border-white/5 hover:bg-white/10 transition uppercase text-[10px] tracking-widest">Cancelar</button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
