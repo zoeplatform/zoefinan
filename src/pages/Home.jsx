@@ -5,8 +5,8 @@ import TransactionsList from "../components/TransactionsList";
 import { useNavigate } from "react-router-dom";
 import { db, auth } from "../firebase";
 import { doc, getDoc } from "firebase/firestore";
-import { onAuthStateChanged } from "firebase/auth";
 import { getCurrentMonthKey } from "../utils/dateUtils";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -14,38 +14,60 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [saldoCalculado, setSaldoCalculado] = useState(0);
 
+  const { user, loading: authLoading } = useAuth();
+
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        try {
-          const userRef = doc(db, "usuarios", user.uid);
-          const docSnap = await getDoc(userRef);
-          if (docSnap.exists()) {
-            const data = docSnap.data();
-            
-            // Verificação de registros iniciais
-            const monthKey = getCurrentMonthKey();
-            const hasMonthData = data.historicoMensal && data.historicoMensal[monthKey];
-            const hasSetup = data.setupConcluido;
+    if (authLoading) {
+      setLoading(true);
+      return;
+    }
 
-            if (!hasSetup && !hasMonthData) {
-              navigate("/setup");
-              return;
-            }
-
-            setUserData(data);
-          }
-        } catch (error) {
-          console.error("Erro ao buscar dados do usuário:", error);
-        }
-      } else {
-        navigate("/login");
-      }
+    if (!user) {
       setLoading(false);
-    });
+      navigate("/login");
+      return;
+    }
 
-    return () => unsubscribe();
-  }, [navigate]);
+    let isActive = true;
+    setLoading(true);
+
+    const fetchUserData = async () => {
+      try {
+        const userRef = doc(db, "usuarios", user.uid);
+        const docSnap = await getDoc(userRef);
+        if (!docSnap.exists()) return;
+
+        const data = docSnap.data();
+
+        const monthKey = getCurrentMonthKey();
+        const hasMonthData = data.historicoMensal && data.historicoMensal[monthKey];
+        const hasSetup = data.setupConcluido;
+
+        if (!hasSetup && !hasMonthData) {
+          if (isActive) {
+            navigate("/setup");
+          }
+          return;
+        }
+
+        if (isActive) {
+          setUserData(data);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar dados do usuário:", error);
+      } finally {
+        if (isActive) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchUserData();
+
+    return () => {
+      isActive = false;
+    };
+  }, [authLoading, navigate, user]);
 
   useEffect(() => {
     if (userData) {
