@@ -1,49 +1,29 @@
-// OBS: o pacote `phosphor-react` (v1.x) não exporta `AlertCircle`.
-// Para o estado "critical" usamos `WarningCircle` (ícone semelhante).
 import { CheckCircle, Warning, WarningCircle } from "phosphor-react";
 
-/**
- * Componente de Detalhamento de Categorias
- * Mostra quais categorias estão dentro ou fora do orçamento ideal
- */
-
-export default function CategoryBreakdown({ categories, totalIncome }) {
+export default function CategoryBreakdown({ categories }) {
   const getStatusIcon = (status) => {
     switch (status) {
       case "ok":
-        return <CheckCircle size={20} className="text-green-400" />;
+        return <CheckCircle size={20} weight="fill" className="text-green-400" />;
       case "warning":
-        return <Warning size={20} className="text-yellow-400" />;
+        return <Warning size={20} weight="fill" className="text-yellow-400" />;
       case "critical":
-        return <WarningCircle size={20} className="text-red-400" />;
+        return <WarningCircle size={20} weight="fill" className="text-red-400" />;
       default:
         return null;
-    }
-  };
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "ok":
-        return "bg-green-50 border-green-200";
-      case "warning":
-        return "bg-yellow-50 border-yellow-200";
-      case "critical":
-        return "bg-red-50 border-red-200";
-      default:
-        return "bg-gray-50 border-gray-200";
     }
   };
 
   const getTextColor = (status) => {
     switch (status) {
       case "ok":
-        return "text-green-700";
+        return "text-green-400";
       case "warning":
-        return "text-yellow-700";
+        return "text-yellow-400";
       case "critical":
-        return "text-red-700";
+        return "text-red-400";
       default:
-        return "text-gray-700";
+        return "text-white/60";
     }
   };
 
@@ -56,51 +36,53 @@ export default function CategoryBreakdown({ categories, totalIncome }) {
       case "critical":
         return "bg-red-400";
       default:
-        return "bg-gray-600";
+        return "bg-white/20";
     }
   };
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-lg font-semibold text-white mb-4">Detalhamento</h2>
+    <div className="space-y-6">
+      <h2 className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-4">Detalhamento por Categoria</h2>
       
       {categories.map((category) => (
         <div
           key={category.name}
-          className={`p-4 border border-white/10 rounded-2xl bg-white/5 mb-3`}
+          className="bg-white/5 border border-white/10 p-6 rounded-3xl group hover:border-white/20 transition-all"
         >
-          <div className="flex items-start justify-between mb-3">
-            <div className="flex items-center gap-3">
-              {getStatusIcon(category.status)}
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex items-center gap-4">
+              <div className={`p-2 rounded-xl bg-white/5`}>
+                {getStatusIcon(category.status)}
+              </div>
               <div>
-                <h3 className="font-medium text-white">{category.name}</h3>
-                <p className="text-sm text-white/60">
-                  Ideal: {category.ideal}% | Atual: {category.percentage.toFixed(1)}%
+                <h3 className="text-sm font-black text-white uppercase tracking-tight">{category.name}</h3>
+                <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest mt-1">
+                  Ideal: {category.ideal}% • Atual: {category.percentage.toFixed(1)}%
                 </p>
               </div>
             </div>
-            <span className="text-lg font-semibold text-white">
-              R$ {category.amount.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
-            </span>
+            <div className="text-right">
+              <span className="text-lg font-black text-white tracking-tighter">
+                R$ {category.amount.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+              </span>
+            </div>
           </div>
 
           {/* Progress Bar */}
-          <div className="w-full bg-white/10 rounded-full h-1.5">
+          <div className="w-full bg-white/5 rounded-full h-1.5 overflow-hidden">
             <div
-              className={`h-1.5 rounded-full transition-all duration-300 ${getBarColor(category.status)}`}
+              className={`h-full rounded-full transition-all duration-1000 ${getBarColor(category.status)}`}
               style={{ width: `${Math.min(category.percentage, 100)}%` }}
             />
           </div>
 
           {/* Status Message */}
           {category.status !== "ok" && (
-            <div className={`mt-3 text-sm ${getTextColor(category.status)}`}>
-              {category.status === "warning" && (
-                <p>⚠️ Esta categoria está {((category.percentage - category.ideal) / category.ideal * 100).toFixed(0)}% acima do ideal.</p>
-              )}
-              {category.status === "critical" && (
-                <p>🚨 Esta categoria está {((category.percentage - category.ideal) / category.ideal * 100).toFixed(0)}% acima do ideal. Ação urgente recomendada.</p>
-              )}
+            <div className={`mt-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest ${getTextColor(category.status)}`}>
+               <span>{category.status === "warning" ? "⚠️ ALERTA:" : "🚨 CRÍTICO:"}</span>
+               <span className="opacity-80">
+                  {((category.percentage - category.ideal) / category.ideal * 100).toFixed(0)}% ACIMA DO LIMITE IDEAL
+               </span>
             </div>
           )}
         </div>

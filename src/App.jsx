@@ -14,6 +14,7 @@ import Artigos from "./pages/Artigos";
 import Artigo from "./pages/Artigo";
 import Perfil from "./pages/Perfil";
 import Lancamentos from "./pages/Lancamentos";
+import SetupFinanceiro from "./pages/SetupFinanceiro";
 import PrivateRoute from "./components/PrivateRoute";
 import PageTheme from "./components/PageTheme";
 
@@ -28,6 +29,7 @@ export default function App() {
 
         {/* Rotas Privadas */}
         <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
+        <Route path="/setup" element={<PrivateRoute><SetupFinanceiro /></PrivateRoute>} />
         <Route path="/analytics" element={<PrivateRoute><Analytics /></PrivateRoute>} />
         {/* <Route path="/renda" element={<PrivateRoute><Renda /></PrivateRoute>} /> -- Removido */}
         <Route path="/despesas" element={<PrivateRoute><Despesas /></PrivateRoute>} />

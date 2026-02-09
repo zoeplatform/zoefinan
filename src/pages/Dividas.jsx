@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { db, auth } from "../firebase";
-import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
-import { ArrowLeft, Plus, Trash, CreditCard, Info, Warning } from "phosphor-react";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
+import { ArrowLeft, Plus, Trash, CreditCard } from "phosphor-react";
 import { getCurrentMonthKey } from "../utils/dateUtils";
 
 export default function Dividas() {
@@ -11,15 +12,13 @@ export default function Dividas() {
   const [parcela, setParcela] = useState("");
   const [renegociada, setRenegociada] = useState(false);
   const [lista, setLista] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
 
   const navigate = useNavigate();
   const currentMonth = getCurrentMonthKey();
 
   useEffect(() => {
-    async function carregarDados() {
-      const user = auth.currentUser;
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         try {
           const userRef = doc(db, "usuarios", user.uid);
@@ -34,11 +33,14 @@ export default function Dividas() {
         } catch (error) {
           console.error("Erro ao carregar dívidas:", error);
         }
+      } else {
+        navigate("/login");
       }
       setFetching(false);
-    }
-    carregarDados();
-  }, [currentMonth]);
+    });
+
+    return () => unsubscribe();
+  }, [currentMonth, navigate]);
 
   async function sincronizarDados(novaLista) {
     const user = auth.currentUser;
