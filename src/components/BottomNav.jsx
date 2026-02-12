@@ -18,7 +18,7 @@ export default function BottomNav() {
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
       <div className="mx-auto max-w-xl px-6 pb-6">
-        <div className="rounded-3xl border border-default bg-surface-lowest/90 dark:bg-surface-high/80 backdrop-blur-lg p-3 flex justify-around shadow-xl dark:shadow-none">
+        <div className="rounded-3xl border border-default --app-background/90 dark:bg-surface-high/80 backdrop-blur-lg p-3 flex justify-around shadow-xl dark:shadow-none">
           <Link to="/home" className={itemClass("/home")} aria-label="Home">
             <House size={22} weight={isActive("/home") ? "fill" : "regular"} />
           </Link>

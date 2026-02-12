@@ -62,7 +62,7 @@ export default function Cadastro() {
         {/* Card */}
         <form
           onSubmit={handleCadastro}
-          className="rounded-[32px] bg-surface-lowest dark:bg-surface-high border border-default p-8 shadow-xl dark:shadow-none transition-all duration-300"
+          className="rounded-[32px] --app-background dark:bg-surface-high border border-default p-8 shadow-xl dark:shadow-none transition-all duration-300"
         >
           <div className="space-y-4">
             <div className="space-y-1">

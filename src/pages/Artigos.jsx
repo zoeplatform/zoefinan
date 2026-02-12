@@ -30,7 +30,7 @@ export default function Artigos() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-surface px-6 pt-8 pb-24 relative overflow-hidden transition-colors duration-300">
+    <div className="min-h-screen bg-app-background px-6 pt-8 pb-24 relative overflow-hidden transition-colors duration-300">
       {/* Glow discreto (consistência visual) - apenas no escuro */}
       <div className="pointer-events-none absolute inset-0 dark:block hidden">
         <div className="absolute -top-24 -left-24 h-[320px] w-[320px] rounded-full bg-white/5 blur-3xl" />
@@ -43,7 +43,7 @@ export default function Artigos() {
         <div className="flex items-center gap-4 mb-8">
           <button
             onClick={() => navigate("/home")}
-            className="h-10 w-10 rounded-full bg-surface-lowest dark:bg-surface-high border border-default flex items-center justify-center active:scale-[0.98] transition shadow-sm dark:shadow-none"
+            className="h-10 w-10 rounded-full bg-surface-low dark:bg-surface-high border border-default flex items-center justify-center active:scale-[0.98] transition shadow-sm dark:shadow-none"
             aria-label="Voltar"
             type="button"
           >
@@ -66,7 +66,7 @@ export default function Artigos() {
             <button
               key={a.id}
               onClick={() => navigate(`/artigo/${a.id}`)}
-              className="w-full text-left rounded-2xl bg-surface-lowest dark:bg-surface-high border border-default p-5 active:scale-[0.99] transition shadow-sm dark:shadow-none hover:bg-surface-low dark:hover:bg-surface-highest"
+              className="w-full text-left rounded-2xl card-art border border-default p-5 active:scale-[0.99] transition shadow-sm dark:shadow-none hover:bg-surface-low dark:hover:bg-surface-highest"
               type="button"
               aria-label={`Abrir artigo: ${a.titulo}`}
             >
@@ -98,7 +98,7 @@ export default function Artigos() {
         </div>
 
         {/* Dica do dia */}
-        <div className="mt-8 rounded-2xl bg-surface-lowest dark:bg-surface-high border border-default p-5 shadow-sm dark:shadow-none">
+        <div className="mt-8 rounded-2xl card-art border border-default p-5 shadow-sm dark:shadow-none">
           <h3 className="font-semibold text-on-surface">Dica do dia 💡</h3>
           <p className="mt-2 text-sm text-on-surface-medium leading-relaxed">
             “O que trabalha com mão remissa empobrece, mas a mão dos diligentes enriquece.”

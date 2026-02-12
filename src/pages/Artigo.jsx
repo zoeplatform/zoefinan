@@ -118,7 +118,7 @@ export default function Artigo() {
       <div className="min-h-screen bg-surface px-6 pt-8 pb-24 text-on-surface-variant transition-colors duration-300">
         <button
           onClick={() => navigate("/artigos")}
-          className="h-10 w-10 rounded-full bg-surface-lowest dark:bg-surface-high border border-default flex items-center justify-center active:scale-[0.98] transition shadow-sm dark:shadow-none"
+          className="h-10 w-10 rounded-full --app-background dark:bg-surface-high border border-default flex items-center justify-center active:scale-[0.98] transition shadow-sm dark:shadow-none"
           type="button"
           aria-label="Voltar"
         >
@@ -143,7 +143,7 @@ export default function Artigo() {
         <div className="flex items-center gap-4 mb-6">
           <button
             onClick={() => navigate("/artigos")}
-            className="h-10 w-10 rounded-full bg-surface-lowest dark:bg-surface-high border border-default flex items-center justify-center active:scale-[0.98] transition shadow-sm dark:shadow-none"
+            className="h-10 w-10 rounded-full --app-background dark:bg-surface-high border border-default flex items-center justify-center active:scale-[0.98] transition shadow-sm dark:shadow-none"
             aria-label="Voltar"
             type="button"
           >
@@ -154,7 +154,7 @@ export default function Artigo() {
         </div>
 
         {/* Conteúdo */}
-        <article className="rounded-2xl bg-surface-lowest dark:bg-surface-high border border-default p-6 prose-article shadow-sm dark:shadow-none">
+        <article className="rounded-2xl --app-background dark:bg-surface-high border border-default p-6 prose-article shadow-sm dark:shadow-none">
           <h1 className="text-on-surface">{artigo.titulo}</h1>
 
           {/* Versículo em destaque */}

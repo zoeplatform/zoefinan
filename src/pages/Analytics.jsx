@@ -67,22 +67,22 @@ export default function Analytics() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-surface flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white/70" />
+      <div className="min-h-screen bg-app-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-on-surface-variant" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-surface text-white p-6 pb-32 md:pb-8">
+    <div className="min-h-screen bg-app-background text-on-surface p-6 pb-32 md:pb-8">
       <div className="max-w-6xl mx-auto">
         <header className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-black uppercase tracking-tighter">Analytics</h1>
-            <p className="text-xs text-white/40 mt-1 uppercase tracking-widest font-bold">Saúde Financeira</p>
+            <h1 className="text-2xl font-black uppercase tracking-tighter text-on-surface">Analytics</h1>
+            <p className="text-xs text-on-surface-variant mt-1 uppercase tracking-widest font-bold">Saúde Financeira</p>
           </div>
-          <div className="h-12 w-12 rounded-2xl shadow-sm dark:shadow-none bg-surface-high dark:bg-surface-highest border border-white/10 flex items-center justify-center">
-            <CalendarBlank size={24} weight="duotone" className="text-white/60" />
+          <div className="h-12 w-12 rounded-2xl shadow-sm dark:shadow-none bg-surface-low border border-default flex items-center justify-center">
+            <CalendarBlank size={24} weight="duotone" className="text-on-surface-variant" />
           </div>
         </header>
 
@@ -94,8 +94,8 @@ export default function Analytics() {
               onClick={() => setSelectedMonth(month)}
               className={`px-5 py-2.5 rounded-2xl shadow-sm dark:shadow-none text-[10px] font-black transition-all duration-300 whitespace-nowrap border ${
                 selectedMonth === month
-                  ? "bg-on-surface text-surface-lowest dark:bg-white dark:text-black border-white shadow-lg shadow-white/5 scale-105"
-                  : "bg-surface-high dark:bg-surface-highest text-white/30 border-white/5 hover:bg-surface-high dark:bg-surface-highest hover:text-white/60"
+                  ? "bg-on-surface text-surface-lowest dark:bg-white dark:text-black border-on-surface shadow-lg scale-105"
+                  : "bg-surface-low text-on-surface-variant border-default hover:bg-surface hover:text-on-surface"
               }`}
             >
               {formatMonthKey(month).toUpperCase()}
@@ -106,15 +106,15 @@ export default function Analytics() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Gráfico de Desempenho */}
           <div className="lg:col-span-8">
-            <div className="bg-surface-lowest dark:bg-surface-high border border-white/10 rounded-[32px] shadow-md dark:shadow-none p-7 backdrop-blur-xl shadow-2xl h-full">
+            <div className="bg-surface-low border border-default rounded-[32px] shadow-md dark:shadow-none p-7 backdrop-blur-xl h-full">
               <div className="flex justify-between items-start mb-8">
                 <div>
-                  <p className="text-[10px] text-white/30 uppercase tracking-[0.2em] font-black mb-1">Saldo Acumulado</p>
-                  <h3 className="text-3xl font-black">
+                  <p className="text-[10px] text-on-surface-variant uppercase tracking-[0.2em] font-black mb-1">Saldo Acumulado</p>
+                  <h3 className="text-3xl font-black text-on-surface">
                     R$ {(totalIncome - totalExpenses).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                   </h3>
                 </div>
-                <div className={`px-3 py-1 rounded-full text-[10px] font-black flex items-center gap-1 ${totalIncome > totalExpenses ? "bg-green-500/10 text-green-400" : "bg-red-500/10 text-red-400"}`}>
+                <div className={`px-3 py-1 rounded-full text-[10px] font-black flex items-center gap-1 ${totalIncome > totalExpenses ? "bg-success-bg text-success" : "bg-error-bg text-error"}`}>
                   {totalIncome > totalExpenses ? <TrendUp size={12} weight="bold" /> : <TrendDown size={12} weight="bold" />}
                   {totalIncome > 0 ? (( (totalIncome - totalExpenses) / totalIncome) * 100).toFixed(0) : 0}%
                 </div>
@@ -128,27 +128,27 @@ export default function Analytics() {
           {/* Resumo e Detalhamento */}
           <div className="lg:col-span-4 space-y-6">
             <div className="grid grid-cols-2 gap-4">
-              <div className="bg-surface-lowest dark:bg-surface-high border border-white/5 p-5 rounded-3xl backdrop-blur-sm">
+              <div className="bg-surface-low border border-default p-5 rounded-3xl backdrop-blur-sm">
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="h-2 w-2 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.5)]" />
-                  <p className="text-[10px] text-white/30 uppercase tracking-widest font-black">Entradas</p>
+                  <div className="h-2 w-2 rounded-full bg-success shadow-sm" />
+                  <p className="text-[10px] text-on-surface-variant uppercase tracking-widest font-black">Entradas</p>
                 </div>
-                <p className="text-xl font-black text-white">
+                <p className="text-xl font-black text-on-surface">
                   R$ {totalIncome.toLocaleString("pt-BR")}
                 </p>
               </div>
-              <div className="bg-surface-lowest dark:bg-surface-high border border-white/5 p-5 rounded-3xl backdrop-blur-sm">
+              <div className="bg-surface-low border border-default p-5 rounded-3xl backdrop-blur-sm">
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="h-2 w-2 rounded-full bg-red-400 shadow-[0_0_8px_rgba(248,113,113,0.5)]" />
-                  <p className="text-[10px] text-white/30 uppercase tracking-widest font-black">Saídas</p>
+                  <div className="h-2 w-2 rounded-full bg-error shadow-sm" />
+                  <p className="text-[10px] text-on-surface-variant uppercase tracking-widest font-black">Saídas</p>
                 </div>
-                <p className="text-xl font-black text-white">
+                <p className="text-xl font-black text-on-surface">
                   R$ {totalExpenses.toLocaleString("pt-BR")}
                 </p>
               </div>
             </div>
 
-            <div className="bg-surface-lowest dark:bg-surface-high border border-white/10 rounded-[32px] shadow-md dark:shadow-none p-6">
+            <div className="bg-surface-low border border-default rounded-[32px] shadow-md dark:shadow-none p-6">
               <CategoryBreakdown categories={categories} totalIncome={totalIncome} />
             </div>
           </div>

@@ -71,7 +71,7 @@ export default function PageTheme({ children }) {
   }, [pathname, isDark]);
 
   return (
-    <div className={`flex min-h-screen transition-colors duration-300 ${isDark ? "bg-black text-white" : "bg-surface text-on-surface"}`}>
+    <div className={`flex min-h-screen transition-colors duration-300 bg-app-background text-on-surface`}>
       {!isAuthPage && <Sidebar />}
       <main className={`flex-1 w-full ${!isAuthPage ? "md:pb-0" : ""}`}>
         {children}

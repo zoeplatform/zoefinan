@@ -90,7 +90,7 @@ export default function TransactionsList() {
   }
 
   return (
-    <div className="rounded-[32px] border border-default bg-surface-lowest dark:bg-surface-high p-8 shadow-xl dark:shadow-none transition-all duration-300">
+    <div className="rounded-[32px] border border-default bg-surface-low dark:bg-surface-high p-8 shadow-xl dark:shadow-none transition-all duration-300">
       <div className="flex items-center justify-between mb-8">
         <div>
           <h3 className="text-lg font-black text-on-surface uppercase tracking-tighter">Atividade Recente</h3>
@@ -98,7 +98,7 @@ export default function TransactionsList() {
         </div>
         <button 
           onClick={() => navigate("/lancamentos")}
-          className="h-10 w-10 rounded-xl bg-surface-high dark:bg-surface-highest border border-default flex items-center justify-center text-on-surface hover:scale-110 transition-all"
+          className="h-10 w-10 rounded-xl bg-surface dark:bg-surface-highest border border-default flex items-center justify-center text-on-surface hover:scale-110 transition-all"
         >
           <Plus size={20} weight="bold" />
         </button>
@@ -114,13 +114,13 @@ export default function TransactionsList() {
           transactions.map((t) => (
             <div
               key={t.id ?? `${t.tipo}-${t.descricao}-${t.valor}`}
-              className="flex justify-between items-center p-4 rounded-2xl bg-surface-low dark:bg-black/10 border border-default group hover:bg-surface-high dark:hover:bg-surface-low transition-all"
+              className="flex justify-between items-center p-4 rounded-2xl bg-surface-lowest dark:bg-black/10 border border-default group hover:bg-surface dark:hover:bg-surface-low transition-all"
             >
               <div className="flex items-center gap-4">
                 <div className={`h-12 w-12 rounded-xl border border-default flex items-center justify-center ${
                   t.tipo === 'renda' ? 'bg-success-bg text-success' : 
                   t.tipo === 'divida' ? 'bg-info-bg text-info' : 
-                  'bg-surface-high dark:bg-surface-highest text-on-surface-medium'
+                  'bg-surface dark:bg-surface-highest text-on-surface-medium'
                 }`}>
                   {t.tipo === "despesa" ? <Receipt size={20} /> : t.tipo === "divida" ? <CreditCard size={20} /> : <TrendUp size={20} />}
                 </div>
@@ -145,7 +145,7 @@ export default function TransactionsList() {
 
       <button 
         onClick={() => navigate("/lancamentos")}
-        className="w-full mt-8 py-4 rounded-2xl border border-default bg-surface-high dark:bg-surface-highest text-[10px] font-black text-on-surface-medium uppercase tracking-[0.2em] hover:bg-on-surface hover:text-surface-lowest dark:hover:bg-white dark:hover:text-black transition-all"
+        className="w-full mt-8 py-4 rounded-2xl border border-default bg-surface dark:bg-surface-highest text-[10px] font-black text-on-surface-medium uppercase tracking-[0.2em] hover:bg-on-surface hover:text-surface-lowest dark:hover:bg-white dark:hover:text-black transition-all"
       >
         Ver Extrato Completo
       </button>

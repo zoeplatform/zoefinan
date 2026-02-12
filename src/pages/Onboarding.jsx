@@ -43,23 +43,9 @@ export default function Onboarding() {
   return (
     <div className="min-h-screen relative overflow-hidden bg-surface transition-colors duration-300">
       {/* Background animado */}
-      <div className="pointer-events-none absolute inset-0">
-        {/* Orbes secundários */}
-        <div className="absolute -top-24 -left-28 h-[360px] w-[360px] rounded-full bg-surface-high dark:bg-surface-highest blur-3xl" />
-        <div className="absolute -bottom-28 -right-20 h-[420px] w-[420px] rounded-full bg-surface-high dark:bg-surface-highest blur-3xl" />
-
-        {/* ORBE PRINCIPAL ANIMADO */}
-        <div className="absolute left-1/2 top-[18%] -translate-x-1/2">
-          <div className="h-[420px] w-[420px] rounded-full bg-gradient-to-b from-orange-400/70 via-purple-500/55 to-blue-500/55 opacity-70 blur-[2px] animate-orb" />
-          <div className="absolute inset-0 rounded-full bg-surface/40 blur-2xl" />
-        </div>
-
-        {/* Linhas decorativas */}
-        <div className="absolute inset-0 opacity-30">
-          <div className="absolute left-[-10%] top-[12%] h-[2px] w-[70%] rotate-12 bg-on-surface/10 blur-[0.5px]" />
-          <div className="absolute right-[-15%] top-[32%] h-[2px] w-[75%] -rotate-12 bg-on-surface/15 blur-[0.5px]" />
-        </div>
-      </div>
+   
+       
+       
 
       {/* Conteúdo */}
       <div className="relative z-10 min-h-screen flex flex-col px-6 pt-8 pb-8">

@@ -1,3 +1,9 @@
+/**
+ * COMPONENTE: Sidebar
+ * DESCRIÇÃO: Menu de navegação lateral para desktop.
+ * ---------------------------------------------------------
+ */
+
 import { House, ChartLine, Target, User, Receipt, SignOut, BookOpen } from "phosphor-react";
 import { Link, useLocation } from "react-router-dom";
 import { auth } from "../firebase";
@@ -6,6 +12,7 @@ export default function Sidebar() {
   const location = useLocation();
   const pathname = location.pathname;
 
+  // Definição dos itens do menu para facilitar a adição de novas rotas
   const menuItems = [
     { path: "/home", icon: House, label: "Início", id: "home" },
     { path: "/diagnostico", icon: ChartLine, label: "Diagnóstico", id: "diagnostico" },
@@ -18,12 +25,15 @@ export default function Sidebar() {
   const isActive = (path) => pathname === path;
 
   return (
-    <aside className="hidden md:flex flex-col w-64 h-screen sticky top-0 bg-surface-highest dark:bg-surface-low border-r border-default p-6 z-50 transition-colors duration-300">
+    <aside className="hidden md:flex flex-col w-64 h-screen sticky top-0 bg-surface-bar dark:bg-surface-low border-r border-default p-6 z-50 transition-colors duration-300">
+      
+      {/* LOGO: Identidade visual da marca */}
       <div className="mb-10 px-2">
         <h1 className="text-2xl font-black text-on-surface tracking-tighter uppercase">ZoeFinan</h1>
         <p className="text-[10px] text-on-surface-variant font-bold uppercase tracking-[0.2em]">Sua Saúde Financeira</p>
       </div>
 
+      {/* NAVEGAÇÃO: Lista de links principais */}
       <nav className="flex-1 space-y-2">
         {menuItems.map((item) => {
           const ActiveIcon = item.icon;
@@ -45,6 +55,7 @@ export default function Sidebar() {
         })}
       </nav>
 
+      {/* RODAPÉ: Ações de conta */}
       <div className="pt-6 border-t border-default">
         <button
           onClick={() => auth.signOut()}

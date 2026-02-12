@@ -110,7 +110,7 @@ export default function Despesas() {
         <div className="flex items-center gap-4 mb-8">
           <button
             onClick={() => navigate(-1)}
-            className="h-12 w-12 rounded-2xl shadow-sm dark:shadow-none bg-surface-lowest dark:bg-surface-high border border-default flex items-center justify-center active:scale-95 transition-all"
+            className="h-12 w-12 rounded-2xl shadow-sm dark:shadow-none --app-background dark:bg-surface-high border border-default flex items-center justify-center active:scale-95 transition-all"
           >
             <ArrowLeft size={20} className="text-on-surface" />
           </button>
@@ -121,7 +121,7 @@ export default function Despesas() {
         </div>
 
         {/* Card de Adição */}
-        <div className="rounded-[32px] bg-surface-lowest dark:bg-surface-high border border-default p-8 shadow-xl dark:shadow-none mb-8">
+        <div className="rounded-[32px] --app-background dark:bg-surface-high border border-default p-8 shadow-xl dark:shadow-none mb-8">
           <h2 className="text-[10px] font-black text-on-surface-variant mb-5 uppercase tracking-[0.2em]">Nova Despesa</h2>
           <div className="space-y-4">
             <div className="space-y-1">
@@ -175,7 +175,7 @@ export default function Despesas() {
             </div>
           ) : (
             lista.map((item) => (
-              <div key={item.id} className="group relative rounded-2xl bg-surface-lowest dark:bg-surface-high border border-default p-5 flex justify-between items-center hover:border-strong transition-all shadow-sm dark:shadow-none">
+              <div key={item.id} className="group relative rounded-2xl --app-background dark:bg-surface-high border border-default p-5 flex justify-between items-center hover:border-strong transition-all shadow-sm dark:shadow-none">
                 <div className="flex items-center gap-4">
                   <div className="h-12 w-12 rounded-xl bg-surface-high dark:bg-surface-highest flex items-center justify-center text-on-surface-variant group-hover:text-on-surface transition-colors">
                     <Receipt size={22} />

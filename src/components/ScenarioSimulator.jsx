@@ -15,19 +15,19 @@ export default function ScenarioSimulator({
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="w-full max-w-md p-8 bg-zinc-900 border border-white/10 rounded-[40px] shadow-2xl">
+      <div className="w-full max-w-md p-8 bg-surface-lowest border border-default rounded-[40px] shadow-2xl">
         <div className="flex justify-between items-center mb-8">
-          <h2 className="text-xl font-black uppercase tracking-tight text-white">Simulador</h2>
-          <button onClick={onClose} className="p-2 bg-white/5 rounded-full text-white/40 hover:text-white transition-colors">
+          <h2 className="text-xl font-black uppercase tracking-tight text-on-surface">Simulador</h2>
+          <button onClick={onClose} className="p-2 bg-surface-high dark:bg-surface-highest rounded-full text-on-surface-variant hover:text-on-surface transition-colors">
             <X size={20} weight="bold" />
           </button>
         </div>
 
         <div className="space-y-8">
           {/* Informações Atuais */}
-          <div className="bg-white/5 border border-white/10 p-6 rounded-3xl">
-            <p className="text-[10px] text-white/30 uppercase font-black tracking-widest mb-2">Despesa Atual: {expenseName}</p>
-            <p className="text-3xl font-black text-white tracking-tighter">
+          <div className="bg-surface-low dark:bg-surface-high border border-default p-6 rounded-3xl">
+            <p className="text-[10px] text-on-surface-variant uppercase font-black tracking-widest mb-2">Despesa Atual: {expenseName}</p>
+            <p className="text-3xl font-black text-on-surface tracking-tighter">
               R$ {currentExpense.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
             </p>
           </div>
@@ -35,8 +35,8 @@ export default function ScenarioSimulator({
           {/* Slider de Redução */}
           <div>
             <div className="flex justify-between mb-4">
-              <label className="text-[10px] font-black text-white/40 uppercase tracking-widest">Redução Desejada</label>
-              <span className="text-sm font-black text-blue-400">{reduction}%</span>
+              <label className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest">Redução Desejada</label>
+              <span className="text-sm font-black text-info">{reduction}%</span>
             </div>
             <input
               type="range"
@@ -45,34 +45,34 @@ export default function ScenarioSimulator({
               step="5"
               value={reduction}
               onChange={(e) => setReduction(Number(e.target.value))}
-              className="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-blue-500"
+              className="w-full h-1.5 bg-surface-high dark:bg-surface-highest rounded-lg appearance-none cursor-pointer accent-info"
             />
           </div>
 
           {/* Resultado da Simulação */}
           <div className="space-y-4">
             <div className="flex justify-between items-center">
-              <span className="text-xs text-white/40 font-bold">Nova Despesa</span>
-              <span className="text-sm font-black text-white">
+              <span className="text-xs text-on-surface-variant font-bold">Nova Despesa</span>
+              <span className="text-sm font-black text-on-surface">
                 R$ {newExpense.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-xs text-white/40 font-bold">Economia Mensal</span>
-              <span className="text-sm font-black text-green-400">
+              <span className="text-xs text-on-surface-variant font-bold">Economia Mensal</span>
+              <span className="text-sm font-black text-success">
                 R$ {savedAmount.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-xs text-white/40 font-bold">Impacto na Renda</span>
-              <span className="text-sm font-black text-blue-400">+{impactPercentage.toFixed(1)}%</span>
+              <span className="text-xs text-on-surface-variant font-bold">Impacto na Renda</span>
+              <span className="text-sm font-black text-info">+{impactPercentage.toFixed(1)}%</span>
             </div>
           </div>
 
           {/* Projeção Anual */}
-          <div className="bg-blue-500/10 p-6 rounded-3xl border border-blue-500/20">
-            <p className="text-[10px] text-blue-400 font-black uppercase tracking-widest mb-1">Economia Anual Estimada</p>
-            <p className="text-3xl font-black text-white tracking-tighter">
+          <div className="bg-info-bg p-6 rounded-3xl border border-info/20">
+            <p className="text-[10px] text-info font-black uppercase tracking-widest mb-1">Economia Anual Estimada</p>
+            <p className="text-3xl font-black text-on-surface tracking-tighter">
               R$ {(savedAmount * 12).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
             </p>
           </div>
@@ -81,13 +81,13 @@ export default function ScenarioSimulator({
           <div className="flex gap-4 pt-4">
             <button
               onClick={onClose}
-              className="flex-1 px-6 py-4 bg-white/5 text-white/60 text-[10px] font-black uppercase tracking-widest rounded-2xl hover:bg-white/10 transition-all"
+              className="flex-1 px-6 py-4 bg-surface-high dark:bg-surface-highest text-on-surface-variant text-[10px] font-black uppercase tracking-widest rounded-2xl hover:bg-surface-highest transition-all"
             >
               Fechar
             </button>
             <button 
               onClick={onClose}
-              className="flex-1 px-6 py-4 bg-white text-black text-[10px] font-black uppercase tracking-widest rounded-2xl hover:scale-[0.98] transition-all active:scale-95"
+              className="flex-1 px-6 py-4 bg-on-surface text-surface-lowest text-[10px] font-black uppercase tracking-widest rounded-2xl hover:scale-[0.98] transition-all active:scale-95"
             >
               Confirmar
             </button>

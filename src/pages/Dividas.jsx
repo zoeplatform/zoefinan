@@ -3,14 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { db, auth } from "../firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
-import { ArrowLeft, Plus, Trash, CreditCard } from "phosphor-react";
+import { ArrowLeft, Plus, Trash, CreditCard, Info } from "phosphor-react";
 import { getCurrentMonthKey } from "../utils/dateUtils";
 
 export default function Dividas() {
   const [credor, setCredor] = useState("");
   const [saldo, setSaldo] = useState("");
   const [parcela, setParcela] = useState("");
-  const [renegociada, setRenegociada] = useState(false);
+  const [isParcelada, setIsParcelada] = useState(false);
   const [lista, setLista] = useState([]);
   const [fetching, setFetching] = useState(true);
 
@@ -66,14 +66,15 @@ export default function Dividas() {
   }
 
   const adicionarDivida = async () => {
-    if (!credor || !saldo || !parcela) return;
+    if (!credor || !saldo) return;
+    if (isParcelada && !parcela) return;
 
     const nova = {
       id: Date.now(),
       credor,
       saldo: Number(saldo),
-      parcela: Number(parcela),
-      renegociada,
+      parcela: isParcelada ? Number(parcela) : Number(saldo),
+      isParcelada,
       data: new Date().toISOString()
     };
 
@@ -82,7 +83,7 @@ export default function Dividas() {
     setCredor("");
     setSaldo("");
     setParcela("");
-    setRenegociada(false);
+    setIsParcelada(false);
     await sincronizarDados(novaLista);
   };
 
@@ -101,11 +102,11 @@ export default function Dividas() {
     );
   }
 
-  const totalParcelas = lista.reduce((acc, curr) => acc + (Number(curr.parcela) || 0), 0);
+  const totalComprometido = lista.reduce((acc, curr) => acc + (Number(curr.parcela) || 0), 0);
 
   return (
     <div className="min-h-screen bg-surface px-6 pt-8 pb-32 relative overflow-hidden transition-colors duration-300">
-      {/* Background Premium (apenas no escuro) */}
+      {/* Background Premium */}
       <div className="pointer-events-none absolute inset-0 dark:block hidden">
         <div className="absolute -top-24 -left-24 h-[320px] w-[320px] rounded-full bg-white/5 blur-3xl" />
         <div className="absolute -bottom-32 -right-24 h-[420px] w-[420px] rounded-full bg-white/5 blur-3xl" />
@@ -117,7 +118,7 @@ export default function Dividas() {
         <div className="flex items-center gap-4 mb-8">
           <button
             onClick={() => navigate(-1)}
-            className="h-12 w-12 rounded-2xl shadow-sm dark:shadow-none bg-surface-lowest dark:bg-surface-high border border-default flex items-center justify-center active:scale-95 transition-all"
+            className="h-12 w-12 rounded-2xl shadow-sm dark:shadow-none --app-background dark:bg-surface-high border border-default flex items-center justify-center active:scale-95 transition-all"
           >
             <ArrowLeft size={20} className="text-on-surface" />
           </button>
@@ -128,7 +129,7 @@ export default function Dividas() {
         </div>
 
         {/* Card de Adição */}
-        <div className="rounded-[32px] bg-surface-lowest dark:bg-surface-high border border-default p-8 shadow-xl dark:shadow-none mb-8">
+        <div className="rounded-[32px] --app-background dark:bg-surface-high border border-default p-8 shadow-xl dark:shadow-none mb-8">
           <h2 className="text-[10px] font-black text-on-surface-variant mb-5 uppercase tracking-[0.2em]">Novo Compromisso</h2>
           <div className="space-y-4">
             <div className="space-y-1">
@@ -141,22 +142,37 @@ export default function Dividas() {
                 className="w-full bg-surface-low dark:bg-black/10 border border-default rounded-2xl p-4 text-sm text-on-surface placeholder:text-on-surface-disabled focus:border-strong transition-all outline-none"
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <label className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1">Saldo Total</label>
-                <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-disabled text-sm font-bold">R$</span>
-                  <input
-                    type="number"
-                    placeholder="0,00"
-                    value={saldo}
-                    onChange={(e) => setSaldo(e.target.value)}
-                    className="w-full bg-surface-low dark:bg-black/10 border border-default rounded-2xl p-4 pl-10 text-sm text-on-surface placeholder:text-on-surface-disabled focus:border-strong transition-all outline-none"
-                  />
-                </div>
+            
+            <div className="space-y-1">
+              <label className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1">Saldo Total Devedor</label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-disabled text-sm font-bold">R$</span>
+                <input
+                  type="number"
+                  placeholder="0,00"
+                  value={saldo}
+                  onChange={(e) => setSaldo(e.target.value)}
+                  className="w-full bg-surface-low dark:bg-black/10 border border-default rounded-2xl p-4 pl-10 text-sm text-on-surface placeholder:text-on-surface-disabled focus:border-strong transition-all outline-none"
+                />
               </div>
-              <div className="space-y-1">
-                <label className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1">Parcela</label>
+            </div>
+
+            <div className="flex items-center justify-between p-4 bg-surface-low dark:bg-surface-highest rounded-2xl border border-default">
+              <div className="flex items-center gap-2">
+                <CreditCard size={18} className="text-on-surface-variant" />
+                <label className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest cursor-pointer">Esta dívida é parcelada?</label>
+              </div>
+              <button 
+                onClick={() => setIsParcelada(!isParcelada)}
+                className={`w-12 h-6 rounded-full transition-colors relative ${isParcelada ? 'bg-success' : 'bg-on-surface-disabled'}`}
+              >
+                <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${isParcelada ? 'left-7' : 'left-1'}`} />
+              </button>
+            </div>
+
+            {isParcelada && (
+              <div className="space-y-1 animate-in zoom-in-95">
+                <label className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1">Valor da Parcela Mensal</label>
                 <div className="relative">
                   <span className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-disabled text-sm font-bold">R$</span>
                   <input
@@ -168,18 +184,7 @@ export default function Dividas() {
                   />
                 </div>
               </div>
-            </div>
-
-            <div className="flex items-center gap-3 p-4 bg-surface-low dark:bg-surface-highest rounded-2xl border border-default">
-              <input
-                type="checkbox"
-                id="renegociada"
-                checked={renegociada}
-                onChange={(e) => setRenegociada(e.target.checked)}
-                className="w-5 h-5 rounded-lg bg-surface border-default text-on-surface focus:ring-0"
-              />
-              <label htmlFor="renegociada" className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest cursor-pointer">Já foi renegociada?</label>
-            </div>
+            )}
 
             <button
               onClick={adicionarDivida}
@@ -196,7 +201,7 @@ export default function Dividas() {
           <h3 className="text-[10px] font-black text-on-surface-variant uppercase tracking-[0.2em]">Sua Lista</h3>
           <div className="text-right">
             <p className="text-[10px] text-on-surface-variant uppercase font-black">Comprometimento Mensal</p>
-            <p className="text-xl font-black text-error">R$ {totalParcelas.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
+            <p className="text-xl font-black text-error">R$ {(totalComprometido || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
           </div>
         </div>
 
@@ -209,7 +214,7 @@ export default function Dividas() {
             </div>
           ) : (
             lista.map((item) => (
-              <div key={item.id} className="group relative rounded-2xl bg-surface-lowest dark:bg-surface-high border border-default p-6 hover:border-strong transition-all shadow-sm dark:shadow-none">
+              <div key={item.id} className="group relative rounded-2xl --app-background dark:bg-surface-high border border-default p-6 hover:border-strong transition-all shadow-sm dark:shadow-none">
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex items-center gap-4">
                     <div className="h-12 w-12 rounded-xl bg-surface-high dark:bg-surface-highest flex items-center justify-center text-on-surface-variant group-hover:text-on-surface transition-colors">
@@ -217,8 +222,8 @@ export default function Dividas() {
                     </div>
                     <div>
                       <p className="text-sm font-black text-on-surface uppercase tracking-tight">{item.credor}</p>
-                      <span className={`text-[8px] font-black px-2 py-0.5 rounded-full uppercase tracking-tighter ${item.renegociada ? 'bg-success-bg text-success' : 'bg-error-bg text-error'}`}>
-                        {item.renegociada ? 'Renegociada' : 'Valor Bruto'}
+                      <span className={`text-[8px] font-black px-2 py-0.5 rounded-full uppercase tracking-tighter ${item.isParcelada ? 'bg-success-bg text-success' : 'bg-error-bg text-error'}`}>
+                        {item.isParcelada ? 'Parcelada' : 'Valor Total'}
                       </span>
                     </div>
                   </div>
@@ -232,11 +237,11 @@ export default function Dividas() {
                 <div className="grid grid-cols-2 gap-4 pt-4 border-t border-default">
                   <div>
                     <p className="text-[8px] text-on-surface-variant font-black uppercase tracking-widest">Saldo Total</p>
-                    <p className="text-sm font-black text-on-surface-medium">R$ {item.saldo.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
+                    <p className="text-sm font-black text-on-surface-medium">R$ {(item.saldo || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-[8px] text-on-surface-variant font-black uppercase tracking-widest">Parcela Mensal</p>
-                    <p className="text-sm font-black text-on-surface">R$ {item.parcela.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
+                    <p className="text-[8px] text-on-surface-variant font-black uppercase tracking-widest">Comprometimento</p>
+                    <p className="text-sm font-black text-on-surface">R$ {(item.parcela || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
                   </div>
                 </div>
               </div>
